@@ -11,9 +11,8 @@
 //
 
 #include "tokens.h"
-
-//#define DO_RETURN(a) return (a)
-#define DO_RETURN(a) return Return(a)
+#define DO_RETURN(a) return (a)
+//#define DO_RETURN(a) return Return(a)
 int Return(int val);
 
 %}
@@ -45,7 +44,7 @@ period          ['.']
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
 "{"                         DO_RETURN('{');
-"}"                         DO_RETURN('{');
+"}"                         DO_RETURN('}');
 "["                         DO_RETURN('[');
 "]"                         DO_RETURN(']');
 ";"                         DO_RETURN(';');
@@ -63,10 +62,10 @@ period          ['.']
 "//".*$                     {/* deletes comments*/};
 [\n]                        {/* deletes new lines*/};
 [\t]                        {/* deletes tabs*/};
-[a-z]+                      DO_RETURN(IDENTIFIER);
+[_a-zA-Z][_a-zA-Z0-9]*      DO_RETURN(IDENTIFIER);
 [0-9]+"."[0-9]+             DO_RETURN(FLOAT_VAL);
 [0-9]+                      DO_RETURN(INT_VAL);
-
+.                           DO_RETURN(JUNK_TOKEN);
 %%
 
 // This function allows us to do extra processing on each token
