@@ -63,9 +63,9 @@ period          ['.']
 "//".*$                     {/* deletes comments*/};
 [\n]                        {/* deletes new lines*/};
 [\t]                        {/* deletes tabs*/};
-[a-z]*                      DO_RETURN(IDENTIFIER);
-[0-9]*"."[0-9]*             DO_RETURN(FLOAT_VAL);
-[0-9]*                      DO_RETURN(INT_VAL);
+[a-z]+                      DO_RETURN(IDENTIFIER);
+[0-9]+"."[0-9]+             DO_RETURN(FLOAT_VAL);
+[0-9]+                      DO_RETURN(INT_VAL);
 
 %%
 
