@@ -58,7 +58,10 @@ period          ['.']
 "=="                        DO_RETURN(EQUALS);
 "&&"                        DO_RETURN(AND);
 "||"                        DO_RETURN(OR); 
-
+" "+                        {/* delete blanks */};
+"//".*$                     {/* deletes comments*/};
+[\n]                        {/* deletes new lines*/};
+[\t]                        {/* deletes tabs*/};
 %%
 
 // This function allows us to do extra processing on each token
