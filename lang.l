@@ -40,6 +40,7 @@ period          ['.']
 "struct"                    DO_RETURN(STRUCT);
 "return"                    DO_RETURN(RETURN);
 "array"                     DO_RETURN(ARRAY);
+"char"                      DO_RETURN(CHAR);
 "."                         DO_RETURN('.');
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
@@ -62,6 +63,10 @@ period          ['.']
 "//".*$                     {/* deletes comments*/};
 [\n]                        {/* deletes new lines*/};
 [\t]                        {/* deletes tabs*/};
+[a-z]*                      DO_RETURN(IDENTIFIER);
+[0-9]*"."[0-9]*             DO_RETURN(FLOAT_VAL);
+[0-9]*                      DO_RETURN(INT_VAL);
+
 %%
 
 // This function allows us to do extra processing on each token
