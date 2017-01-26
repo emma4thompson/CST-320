@@ -388,14 +388,14 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[83] =
     {   0,
-        0,    0,   38,   36,   32,   31,   29,   24,   36,   12,
-       13,   22,   20,   19,   21,   11,   23,   35,   18,   25,
-       33,   16,   17,   33,   33,   33,   33,   33,   33,   33,
-       33,   33,   14,   36,   15,   29,   27,    0,    0,   35,
-       26,   33,   33,   33,   33,   33,    1,   33,   33,   33,
-       33,   33,   28,    0,   30,   34,   33,   33,   33,   33,
-        5,   33,   33,   33,   33,   33,   10,    2,   33,   33,
-       33,   33,   33,    9,    6,    4,   33,   33,    3,    8,
+        0,    0,   38,   33,   30,   29,   27,   22,   33,   12,
+       13,   20,   18,   17,   19,   11,   21,   32,   16,   23,
+       33,   14,   15,   33,   33,   33,   33,   33,   33,   33,
+       33,   33,   33,   33,   33,   27,   25,    0,    0,   32,
+       24,   36,   36,   36,   36,   36,    1,   36,   36,   36,
+       36,   36,   26,    0,   28,   31,   36,   36,   36,   36,
+        5,   36,   36,   36,   36,   36,   10,    2,   36,   36,
+       36,   36,   36,    9,    6,    4,   36,   36,    3,    8,
         7,    0
     } ;
 
@@ -507,7 +507,7 @@ static yyconst flex_int16_t yy_chk[133] =
 static yyconst flex_int32_t yy_rule_can_match_eol[38] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -537,13 +537,15 @@ char *yytext;
 //
 
 #include "tokens.h"
+#include "cSymbolTable.h"
+#include "lex.h"
 #define DO_RETURN(a) return (a)
 //#define DO_RETURN(a) return Return(a)
 int Return(int val);
 
 #define YY_NO_INPUT 1
 /* definitions go here. period is an example. */
-#line 547 "langlex.c"
+#line 549 "langlex.c"
 
 #define INITIAL 0
 
@@ -727,7 +729,7 @@ YY_DECL
 
 
     // token definitions go here. "if" is an example.
-#line 731 "langlex.c"
+#line 733 "langlex.c"
 
 	if ( !(yy_init) )
 		{
@@ -888,128 +890,137 @@ DO_RETURN(')');
 case 14:
 YY_RULE_SETUP
 #line 46 "lang.l"
-DO_RETURN('{');
+DO_RETURN('[');
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 47 "lang.l"
-DO_RETURN('}');
+DO_RETURN(']');
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 48 "lang.l"
-DO_RETURN('[');
+DO_RETURN(';');
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 49 "lang.l"
-DO_RETURN(']');
+DO_RETURN(',');
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 50 "lang.l"
-DO_RETURN(';');
+DO_RETURN('+');
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 51 "lang.l"
-DO_RETURN(',');
+DO_RETURN('-');
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 52 "lang.l"
-DO_RETURN('+');
+DO_RETURN('*');
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 53 "lang.l"
-DO_RETURN('-');
+DO_RETURN('/');
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 54 "lang.l"
-DO_RETURN('*');
+DO_RETURN('%');
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 55 "lang.l"
-DO_RETURN('/');
+DO_RETURN('=');
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 56 "lang.l"
-DO_RETURN('%');
+DO_RETURN(EQUALS);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 57 "lang.l"
-DO_RETURN('=');
+DO_RETURN(AND);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 58 "lang.l"
-DO_RETURN(EQUALS);
+DO_RETURN(OR); 
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 59 "lang.l"
-DO_RETURN(AND);
+{/* delete blanks */}
 	YY_BREAK
 case 28:
-YY_RULE_SETUP
-#line 60 "lang.l"
-DO_RETURN(OR); 
-	YY_BREAK
-case 29:
-YY_RULE_SETUP
-#line 61 "lang.l"
-{/* delete blanks */};
-	YY_BREAK
-case 30:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
+#line 60 "lang.l"
+{/* deletes comments*/}
+	YY_BREAK
+case 29:
+/* rule 29 can match eol */
+YY_RULE_SETUP
+#line 61 "lang.l"
+{/* deletes new lines*/}
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
 #line 62 "lang.l"
-{/* deletes comments*/};
+{/* deletes tabs*/}
 	YY_BREAK
 case 31:
-/* rule 31 can match eol */
 YY_RULE_SETUP
 #line 63 "lang.l"
-{/* deletes new lines*/};
+DO_RETURN(FLOAT_VAL);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 64 "lang.l"
-{/* deletes tabs*/};
+DO_RETURN(INT_VAL);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 65 "lang.l"
-DO_RETURN(IDENTIFIER);
+DO_RETURN(JUNK_TOKEN);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 66 "lang.l"
-DO_RETURN(FLOAT_VAL);
+#line 67 "lang.l"
+{
+                                cst.IncreaseScope();
+                                return yytext[0];
+                            }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 67 "lang.l"
-DO_RETURN(INT_VAL);
+#line 71 "lang.l"
+{
+                                cst.DecreaseScope();
+                                return yytext[0];
+                            }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 68 "lang.l"
-DO_RETURN(JUNK_TOKEN);
+#line 75 "lang.l"
+{
+                                yylval.symbol = cst.Insert(yytext);
+                                return (IDENTIFIER);
+                            }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 69 "lang.l"
+#line 80 "lang.l"
 ECHO;
 	YY_BREAK
-#line 1013 "langlex.c"
+#line 1024 "langlex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1974,7 +1985,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 69 "lang.l"
+#line 80 "lang.l"
 
 
 

@@ -11,6 +11,8 @@
 //
 
 #include "tokens.h"
+#include "cSymbolTable.h"
+#include "lex.h"
 #define DO_RETURN(a) return (a)
 //#define DO_RETURN(a) return Return(a)
 int Return(int val);
@@ -24,8 +26,6 @@ int Return(int val);
 
 
     /* definitions go here. period is an example. */
-period          ['.']
-
 
 %%
 
@@ -43,8 +43,6 @@ period          ['.']
 "."                         DO_RETURN('.');
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
-"{"                         DO_RETURN('{');
-"}"                         DO_RETURN('}');
 "["                         DO_RETURN('[');
 "]"                         DO_RETURN(']');
 ";"                         DO_RETURN(';');
@@ -58,14 +56,25 @@ period          ['.']
 "=="                        DO_RETURN(EQUALS);
 "&&"                        DO_RETURN(AND);
 "||"                        DO_RETURN(OR); 
-" "+                        {/* delete blanks */};
-"//".*$                     {/* deletes comments*/};
-[\n]                        {/* deletes new lines*/};
-[\t]                        {/* deletes tabs*/};
-[_a-zA-Z][_a-zA-Z0-9]*      DO_RETURN(IDENTIFIER);
+"//".*$                     {/* deletes comments*/}
+[ \t\n\r]+                  {/* deletes whitespace*/}
 [0-9]+"."[0-9]+             DO_RETURN(FLOAT_VAL);
 [0-9]+                      DO_RETURN(INT_VAL);
 .                           DO_RETURN(JUNK_TOKEN);
+
+"{"                         {
+                                cst.IncreaseScope();
+                                return yytext[0];
+                            }
+"}"                         {
+                                cst.DecreaseScope();
+                                return yytext[0];
+                            }
+[_a-zA-Z][_a-zA-Z0-9]*      {
+                                yylval.symbol = cst.Insert(yytext);
+                                return (IDENTIFIER);
+                            }
+
 %%
 
 // This function allows us to do extra processing on each token
