@@ -34,16 +34,6 @@ class cSymbolTable{
      cSymbol * LookUpRecent(std::string) 
      {
          return NULL;
-     
-     " "+                        {/* delete blanks */}
-     "//".*$                     {/* deletes comments*/}
-     [\n]                        {/* deletes new lines*/}
-     [\t]                        {/* deletes tabs*/}
-     
-     " "+                        {/* delete blanks */}
-     "//".*$                     {/* deletes comments*/}
-     [\n]                        {/* deletes new lines*/}
-     [\t]                        {/* deletes tabs*/}
      }
 
     private:
