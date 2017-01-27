@@ -60,7 +60,6 @@ int Return(int val);
 [ \t\n\r]+                  {/* deletes whitespace*/}
 [0-9]+"."[0-9]+             DO_RETURN(FLOAT_VAL);
 [0-9]+                      DO_RETURN(INT_VAL);
-.                           DO_RETURN(JUNK_TOKEN);
 
 "{"                         {
                                 cst.IncreaseScope();
@@ -75,9 +74,11 @@ int Return(int val);
                                 return (IDENTIFIER);
                             }
 
+.                           DO_RETURN(JUNK_TOKEN);
+
 %%
 
-// This function allows us to do extra processing on each token
+// This function allows
 int Return(int val)
 {
     printf("Scanned '%s': %d\n", yytext, val);
