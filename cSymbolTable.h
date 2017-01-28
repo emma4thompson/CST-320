@@ -19,6 +19,9 @@ using std::string;
 
 class cSymbolTable{
     public:
+     //************************************
+     //pops the top table off the stack
+     //and next down down becomes default
      void DecreaseScope() 
      {
         if (!cSymbolList.empty()) 
@@ -28,6 +31,9 @@ class cSymbolTable{
      }
   
      //************************************
+     //create a new, empty, symbol table
+     // and place it on a stack of symbol 
+     // tables
      void IncreaseScope()
      {
          unordered_map<string, cSymbol *> hashtable;
@@ -35,6 +41,8 @@ class cSymbolTable{
      }
   
      //************************************
+     //inserts symbols into the current 
+     //default table
      cSymbol * Insert(string yytxt) 
      {
          unordered_map<string, cSymbol *>::iterator iter = 
@@ -56,6 +64,9 @@ class cSymbolTable{
      }
 
      //************************************
+     //search the other tables on the stack 
+     //until either the symbol is found or 
+     //the last table is searched 
      cSymbol * LookUpAll(string yytxt) 
      {
          cSymbol * ret_val = nullptr;
@@ -73,6 +84,8 @@ class cSymbolTable{
      }
 
      //************************************
+     //searches default table (inner-most
+     //scope)
      cSymbol * LookUpRecent(string yytxt) 
      {
           unordered_map<string, cSymbol *>::iterator iter =
