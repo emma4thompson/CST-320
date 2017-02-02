@@ -1,106 +1,118 @@
+#pragma once
 //**************************************
 // cSymbolTable.h
 //
+// Defines a nested symbol table.
+// Individual levels of the symbol table use a std::unordered_map from the STL
 //
-// Author: Emma Thompson 
-// emma.thompson@oit.edu
+// Author: Phil Howard 
+// phil.howard@oit.edu
 //
-// Date: January 26, 2017
+// Date: Jan. 26, 2016
 //
 
 #include <string>
-#include "cSymbol.h"
 #include <unordered_map>
 #include <list>
+#include <utility>      // use pair
 
-using std::list;
-using std::unordered_map;
 using std::string;
+using std::unordered_map;
+using std::list;
+using std::pair;
 
-class cSymbolTable{
+#include "cSymbol.h"
+
+class cSymbolTable
+{
     public:
-     //************************************
-     //pops the top table off the stack
-     //and next down down becomes default
-     void DecreaseScope() 
-     {
-        if (!cSymbolList.empty()) 
-        {
-            cSymbolList.pop_front();
+        // Type for a single symbol table
+        typedef unordered_map<string, cSymbol *> symbolTable_t;
+
+        // Increasing the scope must create a symbol table, so we call
+        // that function to do the actual work of creating the object
+        cSymbolTable()
+        { 
+            IncreaseScope();
         }
-     }
-  
-     //************************************
-     //create a new, empty, symbol table
-     // and place it on a stack of symbol 
-     // tables
-     void IncreaseScope()
-     {
-         unordered_map<string, cSymbol *> hashtable;
-         cSymbolList.push_front(hashtable);
-     }
-  
-     //************************************
-     //inserts symbols into the current 
-     //default table
-     cSymbol * Insert(string yytxt) 
-     {
-         unordered_map<string, cSymbol *>::iterator iter = 
-            cSymbolList.front().find(yytxt);
-         cSymbol * ret_val = nullptr;
 
+        // Increase the scope: add a level to the nested symbol table
+        // Return value is the newly created scope
+        symbolTable_t *IncreaseScope()
+        {
+            symbolTable_t *table = new symbolTable_t();
+            m_SymbolTable.push_front(table);
 
-         if(iter != cSymbolList.front().end())
-         {
-             ret_val = iter->second;
-         }
-         else
-         {
-             ret_val = new cSymbol(yytxt);
-             cSymbolList.front().insert({yytxt, ret_val});
-         }
+            return table;
+        }
 
-         return ret_val;
-     }
+        // Decrease the scope: remove the outer-most scope.
+        // Returned value is the outer-most scope AFTER the pop.
+        //
+        // NOTE: do NOT clean up memory after poping the table. Parts of the
+        // AST will probably contain pointers to symbols in the popped table.
+        symbolTable_t *DecreaseScope()
+        {
+            m_SymbolTable.pop_front();
 
-     //************************************
-     //search the other tables on the stack 
-     //until either the symbol is found or 
-     //the last table is searched 
-     cSymbol * LookUpAll(string yytxt) 
-     {
-         cSymbol * ret_val = nullptr;
+            return m_SymbolTable.front();
+        }
 
-         for(auto iter = cSymbolList.begin(); iter != cSymbolList.end(); ++iter)
-         {
-             unordered_map<string, cSymbol *>::iterator iter_2 = 
-                 iter->find(yytxt);
-             if(iter_2 != iter->end())
-             {
-                 ret_val = iter_2->second;
-             }
-         }
-         return ret_val;
-     }
+        // insert a symbol into the table
+        // Assumes the symbol is not already in the table
+        void Insert(cSymbol *sym)
+        {
+            pair<string, cSymbol*> new_val(sym->GetName(), sym);
+            m_SymbolTable.front()->insert(new_val);
+        }
 
-     //************************************
-     //searches default table (inner-most
-     //scope)
-     cSymbol * LookUpRecent(string yytxt) 
-     {
-          unordered_map<string, cSymbol *>::iterator iter =
-             cSymbolList.front().find(yytxt);
-          cSymbol * ret_val = nullptr;
-          
-          if(iter != cSymbolList.front().end())
-          {
-             ret_val = iter->second;
-          }
-         
-          return ret_val;
-     }
+        // Do a lookup in the nested table. Return the symbol for the outer-most
+        // match. 
+        // Returns nullptr if no match is found.
+        cSymbol *Find(string name)
+        {
+            cSymbol *sym = nullptr;
+
+            list<symbolTable_t *>::iterator it = m_SymbolTable.begin();
+
+            while (it != m_SymbolTable.end())
+            {
+                sym = FindInTable(*it, name);
+                if (sym != nullptr) return sym;
+
+                it++;
+            }
+
+            return nullptr;
+        }
+
+        // Find a symbol in the inner-most scope.
+        // Returns nullptr if the symbol is not found.
+        cSymbol *FindLocal(string name)
+        {
+            return FindInTable(m_SymbolTable.front(), name);
+        }
 
     protected:
-     list <unordered_map<string, cSymbol *>> cSymbolList;
+        // list of symbol tables. The list contains the different levels
+        // in the nested table.
+        list<symbolTable_t *> m_SymbolTable;
+
+        // Utility routine to do a lookup in a single level's table
+        // params are the table to do the lookup in and the name of the symbol
+        // Returns nullptr if the symbol isn't found.
+        cSymbol *FindInTable(symbolTable_t *table, string& name)
+        {
+            symbolTable_t::const_iterator got = table->find(name);
+
+            if (got == table->end())
+                return nullptr;
+            else
+                return got->second;
+        }
 
 };
+
+// Declaration for the global symbol table.
+// Definition is in main.cpp
+extern cSymbolTable g_SymbolTable;

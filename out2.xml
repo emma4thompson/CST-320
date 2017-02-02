@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<program>
+  <block>
+    <stmts>
+      <sym id="1" name="val"/>
+    </stmts>
+  </block>
+</program>
