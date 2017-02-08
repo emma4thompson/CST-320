@@ -85,10 +85,11 @@ typedef union YYSTYPE
     cSymbolTable::symbolTable_t*  sym_table;
     cDeclNode*      decl_node;
     cDeclsNode*     decls_node;
+    cVarExprNode*   var_node;
     
 
 /* Line 2058 of yacc.c  */
-#line 92 "langparse.h"
+#line 93 "langparse.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
