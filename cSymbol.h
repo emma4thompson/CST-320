@@ -39,8 +39,12 @@ class cSymbol : public cAstNode
         }
         virtual string NodeType() { return string("sym"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        bool getType(){return m_type;}
+        void setType(){m_type = true;}
+
     protected:
         static long long nextId;        // Next avail symbol ID
         long long m_id;                 // Unique ID for this symbol
         string m_name;                  // name of symbol
+        bool m_type;
 };

@@ -29,6 +29,22 @@ class cSymbolTable
         // Type for a single symbol table
         typedef unordered_map<string, cSymbol *> symbolTable_t;
 
+        void insertSym()
+        {
+            cSymbol * char_sym = new cSymbol("char");
+            char_sym->setType();
+            Insert(char_sym);
+
+            //int and float
+            cSymbol * int_sym = new cSymbol("int");
+            int_sym->setType();
+            Insert(int_sym);
+
+            cSymbol * float_sym = new cSymbol("float");
+            float_sym->setType();
+            Insert(float_sym);
+        }
+        
         // Increasing the scope must create a symbol table, so we call
         // that function to do the actual work of creating the object
         cSymbolTable()

@@ -864,36 +864,45 @@ DO_RETURN(PRINT);
 case 8:
 YY_RULE_SETUP
 #line 53 "lang.l"
-DO_RETURN(TYPE_ID);
+{
+                                yylval.symbol = g_SymbolTable.Find("int"); 
+                                DO_RETURN(TYPE_ID);
+                            }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 54 "lang.l"
-DO_RETURN(TYPE_ID);
+#line 58 "lang.l"
+{                     
+                                yylval.symbol = g_SymbolTable.Find("float");
+                                DO_RETURN(TYPE_ID);
+                            }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 55 "lang.l"
-DO_RETURN(TYPE_ID);
+#line 63 "lang.l"
+{
+                                yylval.symbol = g_SymbolTable.Find("char");
+                                DO_RETURN(TYPE_ID);
+                            }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 57 "lang.l"
+#line 67 "lang.l"
 DO_RETURN(STRUCT);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 58 "lang.l"
+#line 68 "lang.l"
 DO_RETURN(ARRAY);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 59 "lang.l"
+#line 69 "lang.l"
 DO_RETURN(RETURN);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 60 "lang.l"
+#line 70 "lang.l"
 { 
                               // NOTE: this code will have to be changed
                               // as part of this lab
@@ -908,7 +917,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 71 "lang.l"
+#line 81 "lang.l"
 {
                                 yylval.int_val = atoi(yytext); 
                                 DO_RETURN(INT_VAL); 
@@ -916,45 +925,46 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 75 "lang.l"
+#line 85 "lang.l"
 {
                               // NOTE: this code will have to be udpated as
                               // part of this lab.
-                              DO_RETURN(FLOAT_VAL);
+                                yylval.float_val = atof(yytext);
+                                DO_RETURN(FLOAT_VAL);
                             }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 80 "lang.l"
+#line 91 "lang.l"
 DO_RETURN(EQUALS);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 81 "lang.l"
+#line 92 "lang.l"
 DO_RETURN(AND);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 82 "lang.l"
+#line 93 "lang.l"
 DO_RETURN(OR);
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 83 "lang.l"
+#line 94 "lang.l"
 ;   /* Ignore comments */
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 84 "lang.l"
+#line 95 "lang.l"
 DO_RETURN(JUNK_TOKEN);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 85 "lang.l"
+#line 96 "lang.l"
 ECHO;
 	YY_BREAK
-#line 958 "langlex.c"
+#line 968 "langlex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1919,7 +1929,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "lang.l"
+#line 96 "lang.l"
 
 
 

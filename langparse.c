@@ -524,12 +524,12 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    89,    89,    96,    97,    99,   103,   107,   108,   109,
-     110,   111,   112,   113,   115,   116,   118,   121,   123,   125,
-     127,   129,   130,   132,   134,   136,   138,   139,   141,   143,
-     145,   147,   149,   150,   151,   152,   153,   154,   156,   157,
-     159,   160,   161,   163,   165,   167,   168,   170,   172,   173,
-     175,   176,   177,   179,   180,   181,   182,   184,   185,   186,
-     187
+     110,   111,   112,   113,   116,   117,   119,   122,   124,   126,
+     128,   130,   131,   133,   135,   137,   139,   142,   144,   146,
+     148,   150,   152,   153,   154,   155,   156,   157,   159,   160,
+     162,   163,   164,   166,   168,   170,   171,   173,   175,   176,
+     178,   179,   180,   182,   183,   184,   185,   187,   188,   189,
+     190
 };
 #endif
 
@@ -1669,13 +1669,13 @@ yyreduce:
   case 7:
 /* Line 1792 of yacc.c  */
 #line 107 "lang.y"
-    {}
+    { (yyval.decls_node) = (yyvsp[(1) - (2)].decls_node); (yyval.decls_node)->Insert((yyvsp[(2) - (2)].decl_node)); }
     break;
 
   case 8:
 /* Line 1792 of yacc.c  */
 #line 108 "lang.y"
-    {}
+    { (yyval.decls_node) = new cDeclsNode((yyvsp[(1) - (1)].decl_node)); }
     break;
 
   case 9:
@@ -1710,289 +1710,291 @@ yyreduce:
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 115 "lang.y"
-    {}
+#line 116 "lang.y"
+    { (yyval.decl_node) = new cVarDeclNode((yyvsp[(1) - (2)].symbol), (yyvsp[(2) - (2)].symbol)); }
     break;
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 117 "lang.y"
+#line 118 "lang.y"
     {}
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
-#line 119 "lang.y"
+#line 120 "lang.y"
     {}
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
-#line 122 "lang.y"
+#line 123 "lang.y"
     {}
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
-#line 124 "lang.y"
+#line 125 "lang.y"
     {}
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
-#line 126 "lang.y"
+#line 127 "lang.y"
     {}
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
-#line 128 "lang.y"
+#line 129 "lang.y"
     {}
     break;
 
   case 21:
 /* Line 1792 of yacc.c  */
-#line 129 "lang.y"
+#line 130 "lang.y"
     {}
     break;
 
   case 22:
 /* Line 1792 of yacc.c  */
-#line 131 "lang.y"
+#line 132 "lang.y"
     {}
     break;
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 133 "lang.y"
+#line 134 "lang.y"
     {}
     break;
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 134 "lang.y"
+#line 135 "lang.y"
     {}
     break;
 
   case 25:
 /* Line 1792 of yacc.c  */
-#line 136 "lang.y"
-    {}
+#line 137 "lang.y"
+    { (yyval.ast_node) = (yyvsp[(1) - (1)].decl_node); }
     break;
 
   case 26:
 /* Line 1792 of yacc.c  */
-#line 138 "lang.y"
-    {}
+#line 139 "lang.y"
+    { (yyval.stmts_node) = (yyvsp[(1) - (2)].stmts_node);
+                                  (yyval.stmts_node)->Insert((yyvsp[(2) - (2)].stmt_node));    
+                                }
     break;
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 139 "lang.y"
+#line 142 "lang.y"
     { (yyval.stmts_node) = new cStmtsNode((yyvsp[(1) - (1)].stmt_node)); }
     break;
 
   case 28:
 /* Line 1792 of yacc.c  */
-#line 142 "lang.y"
-    {}
+#line 145 "lang.y"
+    { (yyval.stmt_node) = new cIfNode((yyvsp[(3) - (7)].expr_node), (yyvsp[(5) - (7)].stmts_node)); }
     break;
 
   case 29:
 /* Line 1792 of yacc.c  */
-#line 144 "lang.y"
-    {}
+#line 147 "lang.y"
+    { (yyval.stmt_node) = new cIfNode((yyvsp[(3) - (9)].expr_node), (yyvsp[(5) - (9)].stmts_node), (yyvsp[(7) - (9)].stmts_node)); }
     break;
 
   case 30:
-/* Line 1792 of yacc.c  */
-#line 146 "lang.y"
-    {}
-    break;
-
-  case 31:
-/* Line 1792 of yacc.c  */
-#line 148 "lang.y"
-    { (yyval.stmt_node) = new cPrintNode((yyvsp[(3) - (5)].expr_node)); }
-    break;
-
-  case 32:
 /* Line 1792 of yacc.c  */
 #line 149 "lang.y"
     {}
     break;
 
-  case 33:
-/* Line 1792 of yacc.c  */
-#line 150 "lang.y"
-    {}
-    break;
-
-  case 34:
+  case 31:
 /* Line 1792 of yacc.c  */
 #line 151 "lang.y"
-    {}
+    { (yyval.stmt_node) = new cPrintNode((yyvsp[(3) - (5)].expr_node)); }
     break;
 
-  case 35:
+  case 32:
 /* Line 1792 of yacc.c  */
 #line 152 "lang.y"
     {}
     break;
 
-  case 36:
+  case 33:
 /* Line 1792 of yacc.c  */
 #line 153 "lang.y"
     {}
     break;
 
-  case 37:
+  case 34:
 /* Line 1792 of yacc.c  */
 #line 154 "lang.y"
     {}
     break;
 
-  case 38:
+  case 35:
 /* Line 1792 of yacc.c  */
-#line 156 "lang.y"
+#line 155 "lang.y"
     {}
     break;
 
-  case 39:
+  case 36:
+/* Line 1792 of yacc.c  */
+#line 156 "lang.y"
+    { (yyval.stmt_node) = new cReturnNode((yyvsp[(2) - (3)].expr_node)); }
+    break;
+
+  case 37:
 /* Line 1792 of yacc.c  */
 #line 157 "lang.y"
     {}
     break;
 
-  case 40:
+  case 38:
 /* Line 1792 of yacc.c  */
 #line 159 "lang.y"
     {}
     break;
 
-  case 41:
+  case 39:
 /* Line 1792 of yacc.c  */
 #line 160 "lang.y"
     {}
     break;
 
+  case 40:
+/* Line 1792 of yacc.c  */
+#line 162 "lang.y"
+    {}
+    break;
+
+  case 41:
+/* Line 1792 of yacc.c  */
+#line 163 "lang.y"
+    {}
+    break;
+
   case 42:
 /* Line 1792 of yacc.c  */
-#line 161 "lang.y"
+#line 164 "lang.y"
     {}
     break;
 
   case 43:
 /* Line 1792 of yacc.c  */
-#line 163 "lang.y"
-    { (yyval.ast_node) = (yyvsp[(1) - (1)].symbol); }
+#line 166 "lang.y"
+    { (yyval.ast_node) = new cVarExprNode((yyvsp[(1) - (1)].symbol)); }
     break;
 
   case 44:
 /* Line 1792 of yacc.c  */
-#line 165 "lang.y"
-    { (yyval.ast_node) = (yyvsp[(1) - (1)].ast_node); }
+#line 168 "lang.y"
+    { (yyval.ast_node) = (yyvsp[(1) - (1)].expr_node); }
     break;
 
   case 45:
-/* Line 1792 of yacc.c  */
-#line 167 "lang.y"
-    {}
-    break;
-
-  case 46:
-/* Line 1792 of yacc.c  */
-#line 168 "lang.y"
-    {}
-    break;
-
-  case 47:
 /* Line 1792 of yacc.c  */
 #line 170 "lang.y"
     {}
     break;
 
+  case 46:
+/* Line 1792 of yacc.c  */
+#line 171 "lang.y"
+    {}
+    break;
+
+  case 47:
+/* Line 1792 of yacc.c  */
+#line 173 "lang.y"
+    { (yyval.ast_node) = (yyvsp[(1) - (1)].expr_node); }
+    break;
+
   case 48:
 /* Line 1792 of yacc.c  */
-#line 172 "lang.y"
-    {}
+#line 175 "lang.y"
+    { (yyval.expr_node) = new cBinaryExprNode((yyvsp[(1) - (3)].expr_node), new cOpNode(EQUALS), (yyvsp[(3) - (3)].expr_node)); }
     break;
 
   case 49:
 /* Line 1792 of yacc.c  */
-#line 173 "lang.y"
+#line 176 "lang.y"
     { (yyval.expr_node) = (yyvsp[(1) - (1)].expr_node); }
     break;
 
   case 50:
 /* Line 1792 of yacc.c  */
-#line 175 "lang.y"
-    {}
+#line 178 "lang.y"
+    { (yyval.expr_node) = new cBinaryExprNode((yyvsp[(1) - (3)].expr_node), new cOpNode('+'), (yyvsp[(3) - (3)].expr_node)); }
     break;
 
   case 51:
 /* Line 1792 of yacc.c  */
-#line 176 "lang.y"
-    {}
+#line 179 "lang.y"
+    { (yyval.expr_node) = new cBinaryExprNode((yyvsp[(1) - (3)].expr_node), new cOpNode('-'), (yyvsp[(3) - (3)].expr_node)); }
     break;
 
   case 52:
 /* Line 1792 of yacc.c  */
-#line 177 "lang.y"
+#line 180 "lang.y"
     { (yyval.expr_node) = (yyvsp[(1) - (1)].expr_node); }
     break;
 
   case 53:
 /* Line 1792 of yacc.c  */
-#line 179 "lang.y"
-    {}
+#line 182 "lang.y"
+    { (yyval.expr_node) = new cBinaryExprNode((yyvsp[(1) - (3)].expr_node), new cOpNode('*'), (yyvsp[(3) - (3)].expr_node)); }
     break;
 
   case 54:
 /* Line 1792 of yacc.c  */
-#line 180 "lang.y"
-    {}
+#line 183 "lang.y"
+    { (yyval.expr_node) = new cBinaryExprNode((yyvsp[(1) - (3)].expr_node), new cOpNode('/'), (yyvsp[(3) - (3)].expr_node)); }
     break;
 
   case 55:
 /* Line 1792 of yacc.c  */
-#line 181 "lang.y"
-    {}
+#line 184 "lang.y"
+    { (yyval.expr_node) = new cBinaryExprNode((yyvsp[(1) - (3)].expr_node), new cOpNode('%'), (yyvsp[(3) - (3)].expr_node)); }
     break;
 
   case 56:
 /* Line 1792 of yacc.c  */
-#line 182 "lang.y"
+#line 185 "lang.y"
     { (yyval.expr_node) = (yyvsp[(1) - (1)].expr_node); }
     break;
 
   case 57:
 /* Line 1792 of yacc.c  */
-#line 184 "lang.y"
-    {}
+#line 187 "lang.y"
+    { (yyval.expr_node) = (yyvsp[(2) - (3)].expr_node); }
     break;
 
   case 58:
 /* Line 1792 of yacc.c  */
-#line 185 "lang.y"
+#line 188 "lang.y"
     { (yyval.expr_node) = new cIntExprNode((yyvsp[(1) - (1)].int_val)); }
     break;
 
   case 59:
 /* Line 1792 of yacc.c  */
-#line 186 "lang.y"
-    {}
+#line 189 "lang.y"
+    { (yyval.expr_node) = new cFloatExprNode((yyvsp[(1) - (1)].float_val)); }
     break;
 
   case 60:
 /* Line 1792 of yacc.c  */
-#line 187 "lang.y"
-    {}
+#line 190 "lang.y"
+    { (yyval.expr_node) = (yyvsp[(1) - (1)].expr_node); }
     break;
 
 
 /* Line 1792 of yacc.c  */
-#line 1996 "langparse.c"
+#line 1998 "langparse.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2231,7 +2233,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 189 "lang.y"
+#line 192 "lang.y"
 
 
 // Function to format error messages

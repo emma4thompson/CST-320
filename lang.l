@@ -50,10 +50,20 @@ whitespace      '[\t\n\r ]'
 "print"                     DO_RETURN(PRINT);
 
     /* Note: The following three lines will need to be changed */
-"int"                       DO_RETURN(TYPE_ID);
-"float"                     DO_RETURN(TYPE_ID);
-"char"                      DO_RETURN(TYPE_ID);
+"int"                       {
+                                yylval.symbol = g_SymbolTable.Find("int"); 
+                                DO_RETURN(TYPE_ID);
+                            }
+                
+"float"                     {                     
+                                yylval.symbol = g_SymbolTable.Find("float");
+                                DO_RETURN(TYPE_ID);
+                            }
 
+"char"                      {
+                                yylval.symbol = g_SymbolTable.Find("char");
+                                DO_RETURN(TYPE_ID);
+                            }
 "struct"                    DO_RETURN(STRUCT);
 "array"                     DO_RETURN(ARRAY);
 "return"                    DO_RETURN(RETURN);
@@ -75,7 +85,8 @@ whitespace      '[\t\n\r ]'
 [0-9]+\.[0-9]+              {
                               // NOTE: this code will have to be udpated as
                               // part of this lab.
-                              DO_RETURN(FLOAT_VAL);
+                                yylval.float_val = atof(yytext);
+                                DO_RETURN(FLOAT_VAL);
                             }
 "=="                        DO_RETURN(EQUALS);
 "&&"                        DO_RETURN(AND);

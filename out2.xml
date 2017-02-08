@@ -1,8 +1,40 @@
 <?xml version="1.0"?>
 <program>
   <block>
+    <decls>
+      <var_decl>
+        <sym id="2" name="int"/>
+        <sym id="4" name="val"/>
+      </var_decl>
+    </decls>
     <stmts>
-      <sym id="1" name="val"/>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
+      <varref>
+        <sym id="4" name="val"/>
+      </varref>
     </stmts>
   </block>
 </program>

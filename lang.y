@@ -81,7 +81,7 @@
 %type <expr_node> addit
 %type <expr_node> term
 %type <expr_node> fact
-%type <ast_node> varref
+%type <expr_node> varref
 %type <ast_node> varpart
 
 %%
@@ -104,15 +104,16 @@ close:  '}'                     { g_SymbolTable.DecreaseScope();
                                   $$ = nullptr; // probably want to change this
                                 }
 
-decls:      decls decl          {}
-        |   decl                {}
+decls:      decls decl          { $$ = $1; $$->Insert($2); }
+        |   decl                { $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     {}
         |   array_decl ';'      {}
         |   func_decl           {}
         |   error ';'           {}
 
-var_decl:   TYPE_ID IDENTIFIER  {}
+        
+var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 {}
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
@@ -133,15 +134,17 @@ paramsspec: paramsspec',' paramspec
                                 {}
         |   paramspec           {}
 
-paramspec:  var_decl            {}
+paramspec:  var_decl            { $$ = $1; }
 
-stmts:      stmts stmt          {}
+stmts:      stmts stmt          { $$ = $1;
+                                  $$->Insert($2);    
+                                }
         |   stmt                { $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
-                                {}
+                                { $$ = new cIfNode($3, $5); }
         |   IF '(' expr ')' stmts ELSE stmts ENDIF ';'
-                                {}
+                                { $$ = new cIfNode($3, $5, $7); }
         |   WHILE '(' expr ')' stmt 
                                 {}
         |   PRINT '(' expr ')' ';'
@@ -150,7 +153,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   lval '=' func_call ';'   {}
         |   func_call ';'       {}
         |   block               {}
-        |   RETURN expr ';'     {}
+        |   RETURN expr ';'     { $$ = new cReturnNode($2); }
         |   error ';'           {}
 
 func_call:  IDENTIFIER '(' params ')' {}
@@ -160,31 +163,31 @@ varref:   varref '.' varpart    {}
         | varref '[' expr ']'   {}
         | varpart               {}
 
-varpart:  IDENTIFIER            { $$ = $1; }
+varpart:  IDENTIFIER            { $$ = new cVarExprNode($1); }
 
 lval:     varref                { $$ = $1; }
 
 params:     params',' param     {}
         |   param               {}
 
-param:      expr                {}
+param:      expr                { $$ = $1; }
 
-expr:       expr EQUALS addit   {}
+expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1, new cOpNode(EQUALS), $3); }
         |   addit               { $$ = $1; }
 
-addit:      addit '+' term      {}
-        |   addit '-' term      {}
+addit:      addit '+' term      { $$ = new cBinaryExprNode($1, new cOpNode('+'), $3); }
+        |   addit '-' term      { $$ = new cBinaryExprNode($1, new cOpNode('-'), $3); }
         |   term                { $$ = $1; }
 
-term:       term '*' fact       {}
-        |   term '/' fact       {}
-        |   term '%' fact       {}
+term:       term '*' fact       { $$ = new cBinaryExprNode($1, new cOpNode('*'), $3); }
+        |   term '/' fact       { $$ = new cBinaryExprNode($1, new cOpNode('/'), $3); }
+        |   term '%' fact       { $$ = new cBinaryExprNode($1, new cOpNode('%'), $3); }
         |   fact                { $$ = $1; }
 
-fact:        '(' expr ')'       {}
+fact:        '(' expr ')'       { $$ = $2; }
         |   INT_VAL             { $$ = new cIntExprNode($1); }
-        |   FLOAT_VAL           {}
-        |   varref              {}
+        |   FLOAT_VAL           { $$ = new cFloatExprNode($1); }
+        |   varref              { $$ = $1; }
 
 %%
 
