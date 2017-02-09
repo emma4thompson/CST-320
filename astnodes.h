@@ -30,4 +30,6 @@
 #include "cAssignNode.h"
 #include "cOpNode.h"
 #include "cBinaryExprNode.h"
+#include "cStructDeclNode.h"
+
 

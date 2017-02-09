@@ -20,7 +20,7 @@
 class cVarExprNode : public cExprNode
 {
     public:
-        cVarExprNode(cSymbol *sym)
+        cVarExprNode(cSymbol *sym) : cExprNode()
         {
             AddChild(sym);
         }
