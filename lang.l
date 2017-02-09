@@ -70,11 +70,15 @@ whitespace      '[\t\n\r ]'
 [a-zA-Z_][a-zA-Z0-9_]*      { 
                               // NOTE: this code will have to be changed
                               // as part of this lab
-                              yylval.symbol = g_SymbolTable.FindLocal(yytext);
+                              yylval.symbol = g_SymbolTable.Find(yytext);
                               if (yylval.symbol == nullptr)
                               {
                                   yylval.symbol = new cSymbol(yytext); 
-                                  g_SymbolTable.Insert(yylval.symbol);
+                              }
+                              else
+                              {
+                                  if(yylval.symbol->getType())
+                                      DO_RETURN(TYPE_ID);
                               }
                               DO_RETURN(IDENTIFIER);
                             }

@@ -19,8 +19,15 @@
 class cVarDeclNode : public cDeclNode
 {
     public:
-        cVarDeclNode(cSymbol *type, cSymbol *name)
+        cVarDeclNode(cSymbol *type, cSymbol *name) : cDeclNode()
         {
+            if (g_SymbolTable.Find(name->GetName()) != nullptr)
+            {
+                name = new cSymbol(name->GetName());
+            }
+            
+            g_SymbolTable.Insert(name);
+
             AddChild(type);
             AddChild(name);
         }
