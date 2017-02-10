@@ -33,6 +33,7 @@
 #include "cParamsNode.h"
 #include "cFuncDeclNode.h"
 #include "cFuncExprNode.h"
+#include "cArrayDeclNode.h"
 
 #include "cOpNode.h"
 #include "cBinaryExprNode.h"

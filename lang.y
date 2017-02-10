@@ -113,8 +113,8 @@ decls:      decls decl          { $$ = $1; $$->Insert($2); }
         |   decl                { $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     { $$ = $1; }
-        |   array_decl ';'      {}
-        |   func_decl           {}
+        |   array_decl ';'      { $$ = $1; }
+        |   func_decl           { $$ = $1; }
         |   error ';'           {}
 
         
@@ -122,7 +122,7 @@ var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 { $$ = new cStructDeclNode($3, $5); }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
-                                {}
+                                { $$ = new cArrayDeclNode($2, $4, $6); }
 
 func_decl:  func_header ';'
                                 { $$ = $1; g_SymbolTable.DecreaseScope(); }
@@ -165,7 +165,7 @@ func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncExprNode($1, $3); }
         |   IDENTIFIER '(' ')'  { $$ = new cFuncExprNode($1, nullptr); }
 
 varref:   varref '.' varpart    { $$ = $1; $$->AddChild($3); }
-        | varref '[' expr ']'   {}
+        | varref '[' expr ']'   { $$ = $1; $$->AddChild($3); }
         | varpart               { $$ = new cVarExprNode($1); }
 
 varpart:  IDENTIFIER            { $$ = $1; }
