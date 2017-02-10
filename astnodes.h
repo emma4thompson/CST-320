@@ -28,8 +28,16 @@
 #include "cReturnNode.h"
 #include "cWhileNode.h"
 #include "cAssignNode.h"
+#include "cStructDeclNode.h"
+#include "cParamListNode.h"
+#include "cParamsNode.h"
+#include "cFuncDeclNode.h"
+#include "cFuncExprNode.h"
+
 #include "cOpNode.h"
 #include "cBinaryExprNode.h"
-#include "cStructDeclNode.h"
+
+
+
 
 

@@ -48,6 +48,11 @@ class cAstNode
             return m_children[child];
         }
 
+        void SetChild(int child, cAstNode *value)
+        {
+            m_children[child] = value;
+        }
+
         // return a string representation of the node
         string ToString() 
         {
