@@ -1,20 +1,14 @@
 #pragma once
 
-//*****************************
+//************************
+// cWhileNode.h
+//
+// Author: Emma Thompson
+// emma.thompson@oit.edu
+//
+// Feb 9, 2017
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 
 #include "cStmtNode.h"
 

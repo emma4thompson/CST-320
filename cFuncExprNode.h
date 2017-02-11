@@ -1,15 +1,12 @@
 #pragma once
-//*****************************
+
+//************************
+// cFuncExprNode.h
 //
+// Author: Emma Thompson
+// emma.thompson@oit.edu
 //
-//
-//
-//
-//
-//
-//
-//
-//
+// Feb 9, 2017
 //
 //
 

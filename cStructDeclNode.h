@@ -1,19 +1,14 @@
 #pragma once
 
-//*******************************
+//************************
+// cStructDeclNode.h
+//
+// Author: Emma Thompson
+// emma.thompson@oit.edu
+//
+// Feb 9, 2017
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 
 #include "cDeclNode.h"
 

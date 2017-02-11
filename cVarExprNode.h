@@ -1,19 +1,14 @@
 #pragma once
 
-//************************************
+//************************
+// cVarExprNode.h
+//
+// Author: Emma Thompson
+// emma.thompson@oit.edu
+//
+// Feb 9, 2017
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 
 #include "cExprNode.h"
 

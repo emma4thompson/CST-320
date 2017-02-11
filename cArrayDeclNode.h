@@ -1,16 +1,12 @@
 #pragma once
 
 //************************
+// cArrayDeclNode.h
 //
+// Author: Emma Thompson
+// emma.thompson@oit.edu
 //
-//
-//
-//
-//
-//
-//
-//
-//
+// Feb 9, 2017
 //
 
 #include "cSymbol.h"
