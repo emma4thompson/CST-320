@@ -30,13 +30,41 @@ class cFuncDeclNode : public cDeclNode
 
             AddChild(type);
             AddChild(name);
+            AddChild(nullptr);
+            AddChild(nullptr);
+            AddChild(nullptr);
         }
 
-        void Insert(cAstNode *node)
+        void AddType(cSymbol *type)
         {
-            AddChild(node);
+            SetChild(0, type);
+        }
+
+        void AddID(cSymbol *id)
+        {
+            SetChild(1, id);
+        }
+
+        void AddParams(cParamsNode *params)
+        {
+            SetChild(2, params);
+        }
+
+        void AddDecls(cDeclsNode *locals)
+        {
+            SetChild(3, locals);
+        }
+
+        void AddStmts(cStmtsNode *stmts)
+        {
+            SetChild(4, stmts);
         }
 
         virtual string NodeType() { return string("func"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };
+
+    
+
+
+

@@ -1,3 +1,14 @@
+Lab 4 Feedback
+
+142
+
+-5 Some of your code snippets didn't set $$ (for example one of the func_decl ones). As a result, you weren't explicitly controlling the construction of the AST. Your tests passed because you got lucky.
+
+-3 Your implementation of cFuncDeclNode would make it difficult to write getters for all the pieces. For example, where are the statements? in m_children[2], [3], or [4]?
+
+
+******************************************
+
 Lab 3 Feedback
 
 97
