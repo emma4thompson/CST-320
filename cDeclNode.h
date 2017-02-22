@@ -12,6 +12,7 @@
 //
 
 #include "cAstNode.h"
+#include "semError.h"
 
 class cDeclNode : public cAstNode
 {

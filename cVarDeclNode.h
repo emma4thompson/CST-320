@@ -11,19 +11,16 @@
 //
 
 #include "cAstNode.h"
-#include "cExprNode.h"
-#include "cSymbolTable.h"
-
-extern g_SymbolTable cSymbolTable;
+#include "cDeclNode.h"
 
 class cVarDeclNode : public cDeclNode
 {
     public:
         cVarDeclNode(cSymbol *type, cSymbol *name) : cDeclNode()
         { 
-            if(g_SymbolTable.FindInTable(name->GetName()) != nullptr)
+            if(g_SymbolTable.FindLocal(name->GetName()) != nullptr)
             {
-                SemanticError(string("Symbol ") + name->GetName() + string( "already in current scope"));
+                SemanticError(string("Symbol ") + name->GetName() + string(" already defined in current scope"));
             }
             //if it's already defined outside the current scope
             else if (g_SymbolTable.Find(name->GetName()) != nullptr)

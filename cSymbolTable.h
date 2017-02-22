@@ -22,7 +22,6 @@ using std::list;
 using std::pair;
 
 #include "cSymbol.h"
-#include "cBaseTypeNode.h"
 
 class cSymbolTable
 {
@@ -30,21 +29,7 @@ class cSymbolTable
         // Type for a single symbol table
         typedef unordered_map<string, cSymbol *> symbolTable_t;
 
-        void insertSym()
-        {
-            cSymbol * char_sym = new cSymbol("char");
-            char_sym->SetDecl(new cBaseTypeNode("char", 1, false));
-            Insert(char_sym);
-
-            //int and float
-            cSymbol * int_sym = new cSymbol("int");
-            int_sym->SetDecl(new cBaseTypeNode("int", 4, false));
-            Insert(int_sym);
-
-            cSymbol * float_sym = new cSymbol("float");
-            float_sym->SetDecl(new cBaseTypeNode("float", 8, true));
-            Insert(float_sym);
-        }
+        virtual void insertSym();
         
         // Increasing the scope must create a symbol table, so we call
         // that function to do the actual work of creating the object

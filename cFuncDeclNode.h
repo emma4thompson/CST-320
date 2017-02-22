@@ -11,33 +11,35 @@
 //
 
 #include "cDeclNode.h"
-#include "cParamsNode.h"
-#include "cStmtsNode.h"
-#include "cSymbol.h"
-#include "cAstNode.h"
 
 class cFuncDeclNode : public cDeclNode
 {
     public:
         cFuncDeclNode(cSymbol *type, cSymbol *name) : cDeclNode()
         {
-            if (g_SymbolTable.Find(name->GetName()) != nullptr)
+            if (g_SymbolTable.FindLocal(name->GetName()) == nullptr)
             {
-                name = new cSymbol(name->GetName());
-                g_SymbolTable.Insert(name);
-                name->SetDecl(this); 
-            }
-            else
-            {
+                if (g_SymbolTable.Find(name->GetName()) != nullptr)
+                {
+                    name = new cSymbol(name->GetName());
+                }
+
                 g_SymbolTable.Insert(name);
                 name->SetDecl(this);
+        
+              //  AddChild(type);
+              //  AddChild(name);
+              //  AddChild(nullptr);
+              //  AddChild(nullptr);
+              //  AddChild(nullptr);
+        
             }
-
             AddChild(type);
             AddChild(name);
             AddChild(nullptr);
             AddChild(nullptr);
             AddChild(nullptr);
+
         }
 
         void AddType(cSymbol *type)
