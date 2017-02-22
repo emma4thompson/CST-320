@@ -125,16 +125,21 @@ array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
                                 { $$ = new cArrayDeclNode($2, $4, $6); }
 
 func_decl:  func_header ';'
-                                { $$ = $1; g_SymbolTable.DecreaseScope(); }
+                                { $$ = $1; 
+                                  g_SymbolTable.DecreaseScope(); }
         |   func_header  '{' decls stmts '}'
-                                { $$ = $1; $$->AddDecls($3); $1->AddStmts($4); g_SymbolTable.DecreaseScope(); }
+                                { $$ = $1; $$->AddDecls($3); 
+                                  $1->AddStmts($4); 
+                                  g_SymbolTable.DecreaseScope(); }
         |   func_header  '{' stmts '}'
-                                { $$ = $1; $$->AddStmts($3); g_SymbolTable.DecreaseScope(); }
+                                { $$ = $1; $$->AddStmts($3); 
+                                    g_SymbolTable.DecreaseScope(); }
 func_header: func_prefix paramsspec ')'
                                 { $$ = $1; $$->AddParams($2); }
         |    func_prefix ')'    { $$ = $1; }
 func_prefix: TYPE_ID IDENTIFIER '('
-                                { $$ = new cFuncDeclNode($1, $2); g_SymbolTable.IncreaseScope(); }
+                                { $$ = new cFuncDeclNode($1, $2); 
+                                    g_SymbolTable.IncreaseScope(); }
 paramsspec: paramsspec',' paramspec 
                                 { $$ = $1; $$->Insert($3); }
         |   paramspec           { $$ = new cParamsNode($1); }
@@ -204,3 +209,12 @@ int yyerror(const char *msg)
 
     return 0;
 }
+
+// Function that gets called when a semantic error happens
+void SemanticError(std::string error)
+{
+    std::cout << "ERROR: " << error << " on line " 
+        << yylineno << "\n";
+        yynerrs++;
+}
+

@@ -22,6 +22,7 @@ using std::list;
 using std::pair;
 
 #include "cSymbol.h"
+#include "cBaseTypeNode.h"
 
 class cSymbolTable
 {
@@ -32,16 +33,16 @@ class cSymbolTable
         void insertSym()
         {
             cSymbol * char_sym = new cSymbol("char");
-            char_sym->setType();
+            char_sym->SetDecl(new cBaseTypeNode("char", 1, false));
             Insert(char_sym);
 
             //int and float
             cSymbol * int_sym = new cSymbol("int");
-            int_sym->setType();
+            int_sym->SetDecl(new cBaseTypeNode("int", 4, false));
             Insert(int_sym);
 
             cSymbol * float_sym = new cSymbol("float");
-            float_sym->setType();
+            float_sym->SetDecl(new cBaseTypeNode("float", 8, true));
             Insert(float_sym);
         }
         

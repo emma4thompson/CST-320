@@ -17,22 +17,34 @@ class cArrayDeclNode : public cDeclNode
     public:
         cArrayDeclNode(cSymbol *type, int count, cSymbol *name) : cDeclNode()
         {   
-            m_count = count;
-
             if (g_SymbolTable.Find(name->GetName()) != nullptr)
             {
                 name = new cSymbol(name->GetName());
+                g_SymbolTable.Insert(name);
+                name->SetDecl(this);
             }
-
-            name->setType();
-
-            g_SymbolTable.Insert(name);
+            else
+            {
+                g_SymbolTable.Insert(name);
+                name->SetDecl(this);
+            }
 
             AddChild(type);
             AddChild(name);
-    
+
+            m_count = count;
         }
-        
+
+        virtual cSymbol *GetName()
+        {
+            return static_cast<cSymbol *>(GetChild(1));
+        }
+
+        virtual cDeclNode *GetType()
+        {
+            return this;
+        }
+
         virtual string AttributesToString()
         {
             string result(" count='");
@@ -43,8 +55,9 @@ class cArrayDeclNode : public cDeclNode
         
         virtual string NodeType() { return string("array_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-    
+
+        virtual bool IsType()   {return true;}
+        virtual bool IsArray()  {return true;}
     protected:
         int m_count;
-
 };

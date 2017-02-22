@@ -20,16 +20,32 @@ class cStructDeclNode : public cDeclNode
             if (g_SymbolTable.Find(name->GetName()) != nullptr)
             {
                 name = new cSymbol(name->GetName());
+                g_SymbolTable.Insert(name);
+                name->SetDecl(this);
             }
-
-            name->setType();
-
-            g_SymbolTable.Insert(name);
+            else
+            {
+                g_SymbolTable.Insert(name);
+                name->SetDecl(this);
+            }
 
             AddChild(decls);
             AddChild(name);
         }
 
+        virtual cSymbol *GetName()
+        {
+            return static_cast<cSymbol *>(GetChild(1));
+        }
+
+        virtual cDeclNode *GetType()
+        {
+            return this;
+        }
+
+        virtual bool IsType()   {return true;}
+        virtual bool IsStruct()  {return true;}
+        
         virtual string NodeType() { return string("struct_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

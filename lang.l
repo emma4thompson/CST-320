@@ -77,8 +77,8 @@ whitespace      '[\t\n\r ]'
                               }
                               else
                               {
-                                  if(yylval.symbol->getType())
-                                      DO_RETURN(TYPE_ID);
+                                if (yylval.symbol->GetDecl() != nullptr && yylval.symbol->GetDecl()->IsType()) 
+                                  return TYPE_ID;
                               }
                               DO_RETURN(IDENTIFIER);
                             }

@@ -11,20 +11,18 @@
 //
 
 #include "cAstNode.h"
-#include "cDeclNode.h"
+#include "cDeclsNode.h"
 
-class cParamsNode : public cAstNode
+class cParamsNode : public cDeclsNode
 {
     public:
-        cParamsNode(cDeclNode *multiple) : cAstNode()
-        {
-            AddChild(multiple);
-        }
+        cParamsNode(cDeclNode *multiple) : cDeclsNode(multiple)
+        {}
         void Insert(cDeclNode *multiple)
         {
             AddChild(multiple);
         }
 
-    virtual string NodeType() { return string("args"); }
-    virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        virtual string NodeType() { return string("args"); }
+        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };
