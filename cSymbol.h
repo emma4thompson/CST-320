@@ -16,45 +16,29 @@
 using std::string;
 
 #include "cAstNode.h"
-#include "cDeclNode.h"
+//#include "cDeclNode.h"
 
 class cSymbol : public cAstNode
 {
     public:
         // param is name of symbol
-        cSymbol(string name) : cAstNode()
-        {
-            m_id = ++nextId;        // get next available ID
-            m_name = name;
-            m_decl = nullptr;
-        }
+        cSymbol(string name);
 
         // return name of symbol
-        string GetName() { return m_name; }
+        string GetName();
         
         // Get/Set the decl associated with this symbol
-        cDeclNode *GetDecl() { return m_decl; }
-        void SetDecl(cDeclNode *decl) { m_decl = decl; }
+        cDeclNode *GetDecl();
+        void SetDecl(cDeclNode *decl);
 
         // return attributes for ToString()
-        virtual string AttributesToString()
-        {
-            string result(" id=\"");
-            result += std::to_string(m_id) + "\"";
-            result += " name=\"" + m_name + "\"";
-            if (m_decl != nullptr)
-            {
-                result += " decl=\"" + std::to_string(m_decl->GetName()->m_id);
-                result +=  "\"";
-            }
-            return result;
-        }
+        virtual string AttributesToString();
 
         // Node type for ToString()
-        virtual string NodeType() { return string("sym"); }
+        virtual string NodeType();
 
         // standard visitor
-        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        virtual void Visit(cVisitor *visitor);
 
     protected:
         static long long nextId;        // Next avail symbol ID

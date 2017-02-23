@@ -15,7 +15,8 @@ OBJS=main.o \
 	 langparse.o \
 	 cVisitor.o \
 	 cBaseTypeNode.o \
-	 cSymbolTable.o
+	 cSymbolTable.o \
+	 cSymbol.o
 
 all: lang
 

@@ -13,6 +13,9 @@
 
 #include "cAstNode.h"
 #include "semError.h"
+#include "cSymbolTable.h"
+
+extern cSymbolTable g_SymbolTable;
 
 class cDeclNode : public cAstNode
 {
