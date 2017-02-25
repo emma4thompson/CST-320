@@ -16,7 +16,7 @@ OBJS=main.o \
 	 cVisitor.o \
 	 cBaseTypeNode.o \
 	 cSymbolTable.o \
-	 cSymbol.o
+
 
 all: lang
 

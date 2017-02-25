@@ -35,6 +35,7 @@
 #include "cFuncExprNode.h"
 #include "cArrayDeclNode.h"
 #include "cBaseTypeNode.h"
+#include "cSemantics.h"
 
 #include "cOpNode.h"
 #include "cBinaryExprNode.h"

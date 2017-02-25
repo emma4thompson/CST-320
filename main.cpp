@@ -6,7 +6,7 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
-// Date: Jan. 18, 2015
+// Date: Jan. 18, 2016
 //
 
 #include <stdio.h>
@@ -17,15 +17,18 @@
 #include "lex.h"
 #include "astnodes.h"
 #include "langparse.h"
+#include "cSemantics.h"
 
 // define global variables
-cSymbolTable g_SymbolTable;
 long long cSymbol::nextId;
+cSymbolTable g_SymbolTable;
 
 // takes two string args: input_file, and output_file
 int main(int argc, char **argv)
 {
     std::cout << "Emma Thompson" << std::endl;
+
+    cSemantics semantics;
 
     const char *outfile_name;
     int result = 0;
@@ -63,11 +66,16 @@ int main(int argc, char **argv)
     result = yyparse();
     if (yyast_root != nullptr)
     {
+        semantics.VisitAllNodes(yyast_root);
+
+        result += semantics.NumErrors();
         if (result == 0)
         {
             output << yyast_root->ToString() << std::endl;
-        } else {
-            output << yynerrs << " Errors in compile\n";
+        } 
+        else 
+        {
+            output << yynerrs + semantics.NumErrors() << " Errors in compile\n";
         }
     }
 
