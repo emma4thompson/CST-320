@@ -27,7 +27,10 @@ class cParamsNode : public cDeclsNode
         {
             return NumChildren();
         }
-
+        int NumChild()
+        {
+            return this->NumChildren();
+        }
         cDeclNode * GetParam(int index)
         {
             return static_cast<cDeclNode *>(GetChild(index));

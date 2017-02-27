@@ -11,14 +11,19 @@ cBaseTypeNode::cBaseTypeNode(string name, int size, bool isFloat) : cDeclNode()
     m_isFloat = isFloat;
 }
 
-cDeclNode * cBaseTypeNode::GetType()
-{
-    return g_SymbolTable.Find(m_name)->GetDecl();
-}
+//cDeclNode * cBaseTypeNode::GetType()
+//{
+//    return g_SymbolTable.Find(m_name)->GetDecl();
+//}
 
 cSymbol * cBaseTypeNode::GetName()
 {
     return g_SymbolTable.Find(m_name);
+}
+
+cDeclNode * cBaseTypeNode::GetType()
+{
+    return this;
 }
 
 bool cBaseTypeNode::IsType() {return true;}

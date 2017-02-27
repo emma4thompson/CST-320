@@ -25,6 +25,12 @@ class cFloatExprNode : public cExprNode
         {
             return " value=\"" + std::to_string(m_value) + "\"";
         }
+
+        virtual cDeclNode * GetType()
+        {
+            return g_SymbolTable.Find("float")->GetDecl();
+        }
+
         virtual string NodeType() { return string("float"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
     protected:

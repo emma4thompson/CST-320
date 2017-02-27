@@ -29,6 +29,15 @@ class cIntExprNode : public cExprNode
         {
             return " value=\"" + std::to_string(m_value) + "\"";
         }
+
+        virtual cDeclNode * GetType()
+        {
+            if(m_value > -128 && m_value < 127)
+                return g_SymbolTable.Find("char")->GetDecl();
+            else
+                return g_SymbolTable.Find("int")->GetDecl();
+        }
+        
         virtual string NodeType() { return string("int"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
     protected:

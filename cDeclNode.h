@@ -29,4 +29,19 @@ class cDeclNode : public cAstNode
 
         virtual cSymbol* GetName() = 0;
         virtual cDeclNode *GetType() = 0;
+
+        bool CanConvert(cDeclNode * right)
+        {
+            if(this->GetType() == right->GetType())
+                return true;
+            if(this->GetType()->IsFloat() && right->GetType()->IsInt())
+                return true;
+            if(this->GetType()->IsFloat() && right->GetType()->IsChar())
+                return true;
+            if(this->GetType()->IsInt() && right->GetType()->IsChar())
+                return true;
+
+            return false;
+        }
+
 };

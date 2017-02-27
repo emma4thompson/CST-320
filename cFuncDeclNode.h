@@ -82,6 +82,11 @@ class cFuncDeclNode : public cDeclNode
 
         }
 
+        //virtual cDeclNode * GetType()
+        //{
+        //    return this->GetReturnType()->GetDecl();
+        //}
+
         void AddType(cSymbol *type)
         {
             SetChild(0, type);
@@ -174,6 +179,16 @@ class cFuncDeclNode : public cDeclNode
         cStmtNode * GetStmts()
         {
             return static_cast<cStmtNode*>(GetChild(4));
+        }
+
+        int GetNumParams()
+        {
+            if(GetChild(2) != nullptr)
+            {
+                return GetLocalParams()->GetNumParams();
+            }
+            
+            return 0;
         }
 
         virtual bool IsFunc()  {return true;}

@@ -24,7 +24,14 @@ class cParamListNode : public cAstNode
         {
             AddChild(multiple);
         }
-
+        int NumParamsInList()
+        {
+            return this->NumChildren();
+        }
+        cExprNode * GetParam(int index)
+        {
+            return static_cast<cExprNode*>(GetChild(index));
+        }
     virtual string NodeType() { return string("params"); }
     virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

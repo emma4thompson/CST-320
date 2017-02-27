@@ -68,14 +68,14 @@ int main(int argc, char **argv)
     {
         semantics.VisitAllNodes(yyast_root);
 
-        result += semantics.NumErrors();
+        result += semantics.GetNumErrors();
         if (result == 0)
         {
             output << yyast_root->ToString() << std::endl;
         } 
         else 
         {
-            output << yynerrs + semantics.NumErrors() << " Errors in compile\n";
+            output << yynerrs + semantics.GetNumErrors() << " Errors in compile\n";
         }
     }
 

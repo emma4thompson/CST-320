@@ -17,12 +17,12 @@ class cBaseTypeNode : public cDeclNode
 {
     public:
        cBaseTypeNode(string name, int size, bool isFloat);
-       virtual cDeclNode *GetType();
+   //    virtual cDeclNode *GetType();
        virtual cSymbol *GetName();
        virtual bool IsType();
        virtual string NodeType();
        virtual void Visit(cVisitor *visitor);
-
+       virtual cDeclNode * GetType();
     
     private:
        string m_name;
