@@ -47,16 +47,18 @@ class cSemantics : public cVisitor
                         //Check to see if func has stmts, if it doesnt, error
                         if(recentFunctionDecl->GetStmts() != nullptr)
                         {
-                            if(recentFunctionDecl->GetNumParams( ) == node->GetNumParams())
+                            if(recentFunctionDecl->GetNumParams() == node->GetNumParams())
                             {
-                                bool isError;
+                                bool isError = false;
 
                                 for(int i = 0; i < node->GetNumParams(); i++)
                                 {
                                     if(recentFunctionDecl->GetLocalParams()->GetParam(i)->GetType() != node->GetParamsList()->GetParam(i)->GetType())
                                         {
-                                            if(node->GetParamsList()->GetParam(i)->GetType()->CanConvert(recentFunctionDecl->GetLocalParams()->GetParam(i)->GetType()) == false)
-                                            isError = true;
+                                            if(!node->GetParamsList()->GetParam(i)->GetType()->CanConvert(recentFunctionDecl->GetLocalParams()->GetParam(i)->GetType())) 
+                                            {
+                                                isError = true;
+                                            }
                                         }
                                 }
                                 if(isError == true)

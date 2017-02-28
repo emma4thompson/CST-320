@@ -47,11 +47,11 @@ class cVarDeclNode : public cDeclNode
 
         virtual cDeclNode *GetType()
         {
-            return (static_cast<cSymbol *>(GetChild(0)))->GetDecl();
+            return static_cast<cSymbol *>(GetChild(0))->GetDecl();
         }
 
         virtual bool IsVar()  {return true;}
 
         virtual string NodeType() { return string("var_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-};
+}ntFunctionDecl->GetLocalParams()->GetParam(i)->GetType()

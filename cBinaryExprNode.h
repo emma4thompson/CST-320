@@ -40,15 +40,8 @@ class cBinaryExprNode : public cExprNode
                 return GetLeft()->GetType();
             if(GetLeft()->GetType()->IsFloat() && GetRight()->GetType()->IsChar())
                 return GetLeft()->GetType();
-            if(GetLeft()->GetType()->IsInt() && GetRight()->GetType()->IsFloat())
-                return GetRight()->GetType();
             if(GetLeft()->GetType()->IsInt() && GetRight()->GetType()->IsChar())
                 return GetLeft()->GetType();
-            if(GetLeft()->GetType()->IsChar() && GetRight()->GetType()->IsInt())
-                return GetRight()->GetType();
-            if(GetLeft()->GetType()->IsChar() && GetRight()->GetType()->IsFloat())
-                return GetRight()->GetType();
-            
             return GetRight()->GetType();
         }
 

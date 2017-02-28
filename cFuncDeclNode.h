@@ -74,18 +74,7 @@ class cFuncDeclNode : public cDeclNode
                 }
                 SetHasParams();
             }
-//            AddChild(type);
-//            AddChild(name);
-//            AddChild(nullptr);
-//            AddChild(nullptr);
-//            AddChild(nullptr);
-
         }
-
-        //virtual cDeclNode * GetType()
-        //{
-        //    return this->GetReturnType()->GetDecl();
-        //}
 
         void AddType(cSymbol *type)
         {
