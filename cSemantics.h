@@ -1,96 +1,219 @@
 #pragma once
-#include <iostream>
-#include <string>
+//**************************************
+// cSemantic.h 
+//
+// Defines visitor class for semantic processing
+//
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Feb. 20, 2017
+//
+
+#include "cVisitor.h"
+#include "cSymbolTable.h"
+
+void FatalError(const char *msg)
+{
+    std::cerr << msg << std::endl;
+    exit(1);
+}
 
 class cSemantics : public cVisitor
 {
-    public:
-        cSemantics() : cVisitor()
-        {}
-        void SemanticError(cAstNode *node, std::string msg)
+  public:
+    cSemantics() : cVisitor()
+    {
+        m_numErrors = 0;
+    }
+
+    int NumErrors() { return m_numErrors; }
+
+    void SemanticError(cAstNode *node, string msg)
+    {
+        m_numErrors++;
+
+        node->SetHasError();
+        std::cout << "ERROR: " << msg <<
+            " on line " << node->LineNumber() << "\n";
+    }
+
+    void VisitAllNodes(cAstNode *node) { node->Visit(this); }
+
+    //void Visit(cArrayRefNode *node)     { VisitAllChildren(node); }
+    //void Visit(cAstNode *node)          { VisitAllChildren(node); }
+
+    void Visit(cAssignNode *node)
+    { 
+        cVarExprNode* lval = node->GetLVal();
+        cExprNode*    expr = node->GetExpr();
+
+        VisitAllChildren(node);
+
+        if (lval->HasError() || expr->HasError())
         {
-            NumErrors++;
+            return; // var not defined: already reported
+        }
+
+        if (!lval->GetType()->IsCompatibleWith(expr->GetType()))
+        {
+            SemanticError(node, "Cannot assign " + 
+                    expr->GetType()->GetName()->GetName() +
+                    " to " + lval->GetType()->GetName()->GetName());
+        }
+    }
+
+    void Visit(cBinaryExprNode *node)   
+    { 
+        VisitAllChildren(node); 
+
+        if (node->GetLeft()->HasError() || node->GetRight()->HasError()) 
+        {
             node->SetHasError();
-            std::cout << "ERROR: " << msg << " on line " << node->LineNumber() << "\n";
         }
-        int GetNumErrors()
+    }
+
+    //void Visit(cBlockNode *node)        { VisitAllChildren(node); }
+    //void Visit(cDeclNode *node)         { VisitAllChildren(node); }
+    //void Visit(cDeclsNode *node)        { VisitAllChildren(node); }
+    //void Visit(cExprNode *node)         { VisitAllChildren(node); }
+    //void Visit(cFloatExprNode *node)    { VisitAllChildren(node); }
+    //void Visit(cFuncDeclNode *node)     { VisitAllChildren(node); }
+    void Visit(cFuncExprNode *node)     
+    { 
+        VisitAllChildren(node);
+        if (node->HasError()) return;
+
+        // defined?
+        if (node->GetName()->GetDecl() == nullptr)
         {
-            return NumErrors;
+            SemanticError(node, "Function " + node->GetName()->GetName() +
+                    " is not declared");
+            return;
         }
 
-        void VisitAllNodes(cAstNode * node)
+        // defined as a function?
+        if (!node->GetName()->GetDecl()->IsFunc())
         {
-            node->Visit(this);
+            SemanticError(node, node->GetName()->GetName() +
+                    " is not a function");
+            return;
         }
 
-        virtual void Visit(cVarExprNode * node)
+        // definition has a body?
+        cFuncDeclNode *decl = dynamic_cast<cFuncDeclNode*>
+            (node->GetName()->GetDecl());
+        if (decl == nullptr || !decl->IsFullyDefined())
         {
-            if(node->ExprGetDecl() == nullptr && node->HasError() == false)
+            SemanticError(node, node->GetName()->GetName() +
+                    " is not fully defined");
+        }
+
+        // check for compatible params
+        cParamListNode* args = node->GetParams();
+        cDeclsNode*  formals = decl->GetParams();
+
+        if ( (args == nullptr && formals != nullptr) ||
+             (args != nullptr && formals == nullptr))
+        {
+            SemanticError(node, node->GetName()->GetName() +
+                    " called with wrong number of arguments");
+            return;
+        }
+        else if (args != nullptr && formals != nullptr)
+        {
+            if (args->NumChildren() != formals->NumChildren())
             {
-                SemanticError(node, "Symbol " + node->GetName()->GetName() + " not defined");
+                SemanticError(node, node->GetName()->GetName() +
+                        " called with wrong number of arguments");
+                return;
+            }
+
+            for (int ii=0; ii<args->NumChildren(); ii++)
+            {
+                if (!formals->GetDecl(ii)->GetType()->IsCompatibleWith(
+                            args->GetParam(ii)->GetType()))
+                {
+                    SemanticError(node, node->GetName()->GetName() +
+                            " called with incompatible argument");
+                    return;
+                }
             }
         }
+    }
 
-        void Visit(cFuncExprNode * node)
+    //void Visit(cIfNode *node)           { VisitAllChildren(node); }
+    //void Visit(cIntExprNode *node)      { VisitAllChildren(node); }
+    //void Visit(cOpNode *node)           { VisitAllChildren(node); }
+    //void Visit(cParamListNode *node)    { VisitAllChildren(node); }
+    //void Visit(cParamsNode *node)       { VisitAllChildren(node); }
+    //void Visit(cPrintNode *node)        { VisitAllChildren(node); }
+    //void Visit(cReturnNode *node)       { VisitAllChildren(node); }
+    //void Visit(cStmtNode *node)         { VisitAllChildren(node); }
+    //void Visit(cStmtsNode *node)        { VisitAllChildren(node); }
+    //void Visit(cStructDeclNode *node)   { VisitAllChildren(node); }
+    //void Visit(cSymbol *node)           { VisitAllChildren(node); }
+    //void Visit(cVarDeclNode *node)      { VisitAllChildren(node); }
+    void Visit(cVarExprNode *node)      
+    { 
+        bool isStruct = false;
+        bool isArray = false;
+
+        // declared?
+        if (node->GetName()->GetDecl() == nullptr)
         {
-            if(node->ExprGetNode() != nullptr && node->HasError() == false)
+            SemanticError(node, "Symbol " + node->GetName()->GetName() + 
+                    " not defined ");
+        }
+
+        VisitAllChildren(node); 
+        if (node->HasError()) return;
+
+        // check for valid indexing
+        for (int ii=0; ii<node->NumItems(); ii++)
+        {
+            if (node->ItemIsIndex(ii))
             {
-                if(node->ExprGetNode()->IsFunc())
+                isArray = true;
+                if (isStruct)
                 {
-                    cFuncDeclNode* recentFunctionDecl = static_cast<cFuncDeclNode*>(node->ExprGetNode());
-                    
-                    
-                    if(recentFunctionDecl != nullptr)
-                    {
-                        //A function exists with this name
-
-                        //Check to see if func has stmts, if it doesnt, error
-                        if(recentFunctionDecl->GetStmts() != nullptr)
-                        {
-                            if(recentFunctionDecl->GetNumParams() == node->GetNumParams())
-                            {
-                                bool isError = false;
-
-                                for(int i = 0; i < node->GetNumParams(); i++)
-                                {
-                                    if(recentFunctionDecl->GetLocalParams()->GetParam(i)->GetType() != node->GetParamsList()->GetParam(i)->GetType())
-                                        {
-                                            if(!node->GetParamsList()->GetParam(i)->GetType()->CanConvert(recentFunctionDecl->GetLocalParams()->GetParam(i)->GetType())) 
-                                            {
-                                                isError = true;
-                                            }
-                                        }
-                                }
-                                if(isError == true)
-                                {
-                                    SemanticError(node, node->GetName()->GetName() + " called with incompatible argument");
-                                }
-                            }
-                            else
-                            {
-                                SemanticError(node, node->GetName()->GetName() + " called with wrong number of arguments");
-                            }
-                        }
-                        else
-                        {
-                            SemanticError(node, "Function " + node->GetName()->GetName() + " is not fully defined");
-                        }
-                    }
+                    SemanticError(node, 
+                            "Mixed arrays and structs not supported");
+                    return;
                 }
-                else
+
+                // is the base an array?
+                cDeclNode *itemDecl = node->GetName()->GetDecl()->GetType();
+                if (!itemDecl->GetType(ii)->IsArray())
                 {
-                    if(node->HasError() == false)
-                    {
-                        SemanticError(node, node->GetName()->GetName() + " is not a function");
-                    }
+                    SemanticError(node, node->GetTextName() + 
+                            " is not an array");
+                    return;
+                }
+
+                // is the index an int?
+                if (!node->GetIndex(ii)->GetType()->IsIntegral())
+                {
+                    SemanticError(node, "Index of " + node->GetTextName() +
+                            " is not an int");
+                    return;
                 }
             }
             else
             {
-                SemanticError(node, "Function " + node->GetName()->GetName() + " is not declared");
+                isStruct = true;
+                if (isArray)
+                {
+                    SemanticError(node, 
+                            "Mixed arrays and structs not supported");
+                    return;
+                }
             }
         }
 
-    private:
-        int NumErrors = 0;
+    }
+    //void Visit(cWhileNode *node)        { VisitAllChildren(node); }
+  protected:
+    int m_numErrors;
 };
+

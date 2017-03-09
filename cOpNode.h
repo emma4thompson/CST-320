@@ -21,8 +21,6 @@ class cOpNode : public cAstNode
             m_op = op;
         }
 
-        virtual string NodeType()       { return "op"; }
-        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
         virtual string AttributesToString()   
         { 
             string result(" value='");
@@ -39,7 +37,7 @@ class cOpNode : public cAstNode
                     result += "&&";
                     break;
                 default:
-                    result += (char)m_op;
+                    result += static_cast<char>(m_op);
                     break;
             }
 
@@ -47,6 +45,8 @@ class cOpNode : public cAstNode
 
             return result;
         }
+        virtual string NodeType()       { return "op"; }
+        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
     protected:
         int m_op;      // the operand
 };

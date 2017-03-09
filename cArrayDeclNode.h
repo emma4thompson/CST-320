@@ -1,63 +1,97 @@
 #pragma once
-
-//************************
+//**************************************
 // cArrayDeclNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines AST node for a array declaration
 //
-// Feb 9, 2017
+// Inherits from cDeclNode because this is a type of declaration
+//
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Jan. 18, 2016
 //
 
-#include "cSymbol.h"
+#include "cAstNode.h"
 #include "cDeclNode.h"
+#include "cDeclsNode.h"
+#include "cSymbol.h"
+#include "cSymbolTable.h"
 
 class cArrayDeclNode : public cDeclNode
 {
     public:
-        cArrayDeclNode(cSymbol *type, int count, cSymbol *name) : cDeclNode()
-        {   
-            if (g_SymbolTable.Find(name->GetName()) != nullptr)
+        // params are: 
+        //     the name of the base type for this array
+        //     the cSymbol for the name of the array
+        //     the size of the array
+        cArrayDeclNode( cSymbol *type_id,
+                        cSymbol *array_id,
+                        int size)
+            : cDeclNode()
+        {
+            cSymbol *name;
+
+            AddChild(type_id);
+
+            // Figure out if the ID we were passed already exists in the 
+            // local symbol table. 
+            name = g_SymbolTable.FindLocal(array_id->GetName());
+            if (name == nullptr)
             {
-                name = new cSymbol(name->GetName());
-                g_SymbolTable.Insert(name);
+                // No: this is good. A later lab will cause an error if it does
+                name = array_id;
+
+                // If the symbol exists in an outer scope, we need to create
+                // a new one instead of re-using the symbol from the outer scope
+                if (g_SymbolTable.Find(array_id->GetName()) != nullptr)
+                {
+                    name = new cSymbol(array_id->GetName());
+                }
+
                 name->SetDecl(this);
-            }
-            else
-            {
+
+                // insert the name of the array into the global symbol table
                 g_SymbolTable.Insert(name);
-                name->SetDecl(this);
             }
 
-            AddChild(type);
             AddChild(name);
 
-            m_count = count;
+            m_count = size;
         }
 
-        virtual cSymbol *GetName()
+        // return the type of the elements
+        virtual cDeclNode *GetBaseType()
         {
-            return static_cast<cSymbol *>(GetChild(1));
+            cSymbol* type = static_cast<cSymbol*>(GetChild(0));
+
+            return type->GetDecl();
         }
 
-        virtual cDeclNode *GetType()
-        {
-            return this;
+        // Since this IS a type, return self
+        virtual cDeclNode *GetType() { return this; }
+
+        virtual cDeclNode *GetType(int depth) 
+        { 
+            if (depth == 0) return this;
+            return GetBaseType()->GetType(depth - 1); 
         }
 
-        virtual string AttributesToString()
+        virtual bool IsType()   { return true; }
+        virtual bool IsArray()  { return true; }
+
+        virtual cSymbol* GetName()
         {
-            string result(" count='");
-            result += std::to_string(m_count);
-            result += "'";
-            return result;
+            return static_cast<cSymbol*>(GetChild(1));
         }
-        
+
         virtual string NodeType() { return string("array_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        virtual string AttributesToString()
+        {
+            return " count=\"" + std::to_string(m_count) + "\"";
+        }
+    //protected:
+     //   int m_count;
 
-        virtual bool IsType()   {return true;}
-        virtual bool IsArray()  {return true;}
-    protected:
-        int m_count;
 };

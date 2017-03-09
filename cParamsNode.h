@@ -1,37 +1,38 @@
 #pragma once
-
-//************************
+//**************************************
 // cParamsNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines a class to represent a list of declarations.
 //
-// Feb 9, 2017
+// Author: Phil Howard 
+// phil.howard@oit.edu
 //
+// Date: Jan. 18, 2016
 //
 
 #include "cAstNode.h"
-#include "cDeclsNode.h"
+#include "cDeclNode.h"
 
 class cParamsNode : public cDeclsNode
 {
     public:
-        cParamsNode(cDeclNode *multiple) : cDeclsNode(multiple)
-        {}
-        void Insert(cDeclNode *multiple)
+        // param is the first decl in this decls
+        cParamsNode(cDeclNode *decl) : cDeclsNode(decl)
         {
-            AddChild(multiple);
+            // child is added in base constructor
         }
 
-        int GetNumParams()
+        virtual int GetSize()
         {
-            return this->NumChildren();
-        }
-        cDeclNode * GetParam(int index)
-        {
-            return static_cast<cDeclNode *>(GetChild(index));
+            return m_size;
         }
 
+        virtual void SetSize(int size)
+        {   
+            m_size = size;
+        }
+
+        // return the XML node name
         virtual string NodeType() { return string("args"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

@@ -1,197 +1,199 @@
 #pragma once
-
-//************************
+//**************************************
 // cFuncDeclNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines AST node for a function declaration
 //
-// Feb 9, 2017
+// Author: Phil Howard 
+// phil.howard@oit.edu
 //
+// Date: Jan. 18, 2016
 //
 
+#include "cAstNode.h"
+#include "cStmtsNode.h"
+#include "cDeclsNode.h"
 #include "cDeclNode.h"
 
 class cFuncDeclNode : public cDeclNode
 {
     public:
-        cFuncDeclNode(cSymbol *type, cSymbol *name) : cDeclNode()
+        // params are the return type and name of function
+        cFuncDeclNode(cSymbol *type, cSymbol *name)
+            : cDeclNode()
         {
-            cSymbol* localName = g_SymbolTable.FindLocal(name->GetName());
-            
-            //doesn't exist in current inner scope
-            if (localName == nullptr)
+            // if in global table, but not local, then the scanner
+            // gave us the outer symbol. We need to create a new one for
+            // this scope.
+            if (g_SymbolTable.Find(name->GetName()) && 
+                !g_SymbolTable.FindLocal(name->GetName()))
             {
-                //already declared somewhere in the program
-                if (g_SymbolTable.Find(name->GetName()) != nullptr)
-                {
-                    name = new cSymbol(name->GetName());
-                }
-
-                g_SymbolTable.Insert(name);
-                name->SetDecl(this);
-        
-                AddChild(type);
-                AddChild(name);
-                AddChild(nullptr);
-                AddChild(nullptr);
-                AddChild(nullptr);
-        
+                name = new cSymbol(name->GetName());
             }
-            else
-            {
-                //if localName isn't a function
-                if(!(localName->GetDecl()->IsFunc()))
-                {
-                    SemanticError(name->GetName() + string(" previously declared as other than a function"));
-                    //adding children because we're creating a new function 
-                    //because what we just found WASN'T a function
-                    AddChild(type);
-                    AddChild(name);
-                    AddChild(nullptr);
-                    AddChild(nullptr);
-                    AddChild(nullptr);
-                }
-                else
-                {
-                    //old_decl is a function
-                    cFuncDeclNode * old_decl = dynamic_cast<cFuncDeclNode*>(localName->GetDecl());
 
-                    if(old_decl->GetReturnType()->GetDecl() != type->GetDecl())
+            AddChild(type);
+            AddChild(name);
+            AddChild(nullptr);      // params: set later
+            AddChild(nullptr);      // locals: set later
+            AddChild(nullptr);      // statements: set later
+
+            m_isDefinition = false;
+            m_hasParams = false;
+
+            cSymbol *func = g_SymbolTable.FindLocal(name->GetName());
+            cDeclNode *decl;
+            cFuncDeclNode *funcDecl;
+
+            // do we have a previous declaration of the same func?
+            if (func != nullptr)
+            {
+                decl = func->GetDecl();
+                if (!decl->IsFunc())
+                {
+                    SetHasError();
+                    SemanticError(name->GetName() + 
+                            " previously declared as other than a function");
+                }
+                else 
+                {
+                    funcDecl = dynamic_cast<cFuncDeclNode *>(decl);
+                    if (funcDecl->GetType() != type->GetDecl())
                     {
-                        SemanticError(name->GetName() + string(" previously declared with different return type"));
-                        AddChild(type);
-                        AddChild(name);
-                        AddChild(nullptr);
-                        AddChild(nullptr);
-                        AddChild(nullptr);
+                        SetHasError();
+                        SemanticError(name->GetName() + 
+                            " previously declared with different return type");
                     }
                     else
                     {
+                        // copy children from previous declaration so
+                        // this decl is up to date
+                        m_children = funcDecl->m_children;
+                        m_isDefinition = funcDecl->m_isDefinition;
+                        m_hasParams = funcDecl->m_hasParams;
                         name->SetDecl(this);
-                        m_children = old_decl->m_children;
                     }
                 }
-                SetHasParams();
             }
-        }
-
-        void AddType(cSymbol *type)
-        {
-            SetChild(0, type);
-        }
-
-        void AddID(cSymbol *id)
-        {
-            SetChild(1, id);
-        }
-
-        void AddParams(cParamsNode *params)
-        {
-            if(GetHasParams())
+            else
             {
-                if(this->GetLocalParams() != nullptr && params != nullptr)
+                // no previous decl.
+                name->SetDecl(this);
+                g_SymbolTable.Insert(name);
+            }
+        }
+
+        // Add formal params to the declaration
+        void AddParams(cDeclsNode *params)
+        {
+            // If params have already been added, need to do consistency checks
+            if (m_hasParams)
+            {
+                cDeclsNode *old_params = GetParams();
+
+                // one has params and the other doesn't
+                if ( (params == nullptr && old_params != nullptr) ||
+                     (params != nullptr && old_params == nullptr))
                 {
-                   if(params->GetNumParams() != this->GetLocalParams()->GetNumParams())
-                   {
-                        SemanticError(this->GetName()->GetName() + string(" previously declared with a different number of parameters"));
-                   }
-                   else
-                   {
-                        bool hasError;
-                        for(int i = 0; i < params->GetNumParams(); i++)
-                        {
-                            if(params->GetParam(i)->GetType() != this->GetLocalParams()->GetParam(i)->GetType())
-                            {
-                                hasError = true;
-                            }
-                        }   
-                        if(hasError)
-                        {
-                            SemanticError(this->GetName()->GetName() + string(" previously declared with different parameters"));
-                        }
-                   } 
+                    SetHasError();
+                    SemanticError(GetName()->GetName() + 
+                        " previously declared with a different number of parameters");
+                    return;
                 }
-                else if (this->GetLocalParams() != nullptr || params != nullptr)
+
+                // both have params, but different number
+                if ( (params != nullptr && old_params != nullptr) &&
+                     (params->NumChildren() != old_params->NumChildren()) )
                 {
-                     SemanticError(this->GetName()->GetName() + string(" previously declared with a different number of parameters"));
+                    SetHasError();
+                    SemanticError(GetName()->GetName() + 
+                        " previously declared with a different number of parameters");
+                    return;
+                }
+
+                // both have params, different type
+                if (params != nullptr && old_params != nullptr)
+                {
+                    for (int ii=0; ii<params->NumChildren(); ii++)
+                    {
+                        cDeclNode *decl1 = params->GetDecl(ii);
+                        cDeclNode *decl2 = old_params->GetDecl(ii);
+
+                        if (decl1->GetType() != decl2->GetType())
+                        {
+                            SetHasError();
+                            SemanticError(GetName()->GetName() +
+                                " previously declared with different parameters");
+                            return;
+                        }
+                    }
                 }
             }
-            SetChild(2, params);
+
+            // if we already have a definition, don't add params. We want 
+            // the params to be consistent with the definition.
+            if (!m_isDefinition) m_children[2] = params;
+
+            m_hasParams = true;
         }
 
-        void AddDecls(cDeclsNode *locals)
+        // Add declarations to the declaration.
+        // Doing so means this is a definition, not just a declaration
+        // BUT, we will wait for AddStmts to mark it as a definition
+        // because our grammar requires all functions to have statements.
+        void AddDecls(cDeclsNode *decls)
         {
-            SetChild(3, locals);
+            m_children[3] = decls;
         }
 
+        // Add statements to the declaration.
+        // Doing so means that this is a definition, not just a declaration
+        // We will set the flag marking this as a definition.
         void AddStmts(cStmtsNode *stmts)
         {
-            if(GetStmts() != nullptr)
+            if (m_isDefinition)
             {
-                SemanticError(GetName()->GetName() + string(" already has a definition"));
+                SetHasError();
+                SemanticError(GetName()->GetName() + " already has a definition");
+                return;
             }
 
-            SetChild(4, stmts);
+            m_children[4] = stmts;
+            m_isDefinition = true;
         }
 
-        bool GetHasParams()
-        {
-            return hasParams;        
+        // Return the return type of function. 
+        virtual cDeclNode *GetType() 
+        { 
+            cSymbol* type = static_cast<cSymbol*>(GetChild(0));
+
+            return type->GetDecl(); 
         }
 
-        void SetHasParams()
+        virtual cSymbol* GetName()
         {
-            hasParams = true;
+            return static_cast<cSymbol*>(GetChild(1));
         }
 
-        virtual cSymbol *GetName()
-        {
-            return static_cast<cSymbol *>(GetChild(1));
-        }
+        cDeclsNode *GetParams() { return (cDeclsNode *)GetChild(2); }
 
-        virtual cDeclNode *GetType()
-        {
-            return this;
-        }
+        cDeclsNode *GetLocals() { return (cDeclsNode *)GetChild(3); }
 
-        virtual cSymbol *GetReturnType()
-        {
-            return static_cast<cSymbol*>(GetChild(0));
-        }
+        cStmtsNode *GetStmts() { return (cStmtsNode *)GetChild(4); }
 
-        cParamsNode * GetLocalParams()
-        {
-            return static_cast<cParamsNode*>(GetChild(2));
-        }
-        
-        cStmtNode * GetStmts()
-        {
-            return static_cast<cStmtNode*>(GetChild(4));
-        }
-
-        int GetNumParams()
-        {
-            if(GetChild(2) != nullptr)
-            {
-                return GetLocalParams()->GetNumParams();
-            }
-            
-            return 0;
-        }
-
-        virtual bool IsFunc()  {return true;}
+        virtual bool IsFunc() { return true; }
+        bool IsFullyDefined() { return m_isDefinition; }
 
         virtual string NodeType() { return string("func"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 
-
-    private:
-        bool hasParams;
-
+        virtual string AttributesToString()
+        {
+            if(m_size == 0 && m_offset == 0)
+                return "";
+            return " size=\"" + std::to_string(m_size) + "\" offset=\"" + std::to_string(m_offset) + "\"";
+        }
+    protected:
+        bool    m_isDefinition;     // flag indicating this is a definition,
+                                    // not just a declaration
+        bool    m_hasParams;        // params have been set
 };
-
-    
-
-
-

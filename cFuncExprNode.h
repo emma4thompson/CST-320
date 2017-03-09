@@ -1,50 +1,38 @@
 #pragma once
-
-//************************
+//**************************************
 // cFuncExprNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines AST node for function calls
 //
-// Feb 9, 2017
+// Inherits from cExprNode so that functions can be used in expressions
 //
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Jan. 18, 2016
 //
 
-#include "cExprNode.h"
+#include "cAstNode.h"
+#include "cStmtsNode.h"
 #include "cParamListNode.h"
+#include "cExprNode.h"
 
 class cFuncExprNode : public cExprNode
 {
     public:
-        cFuncExprNode(cSymbol *name, cParamListNode *paramlist) : cExprNode()
+        // params are the symbol for the func decl, and the params
+        cFuncExprNode(cSymbol *name, cParamListNode *params)
+            : cExprNode()
         {
             AddChild(name);
-            AddChild(paramlist);
+            AddChild(params);
         }
 
-        virtual cDeclNode * GetType()
-        {
-            return static_cast<cSymbol*>(GetChild(0))->GetDecl()->GetType();
-        }
+        cSymbol* GetName() { return static_cast<cSymbol*>(GetChild(0)); }
 
-        int GetNumParams()
-        {
-            if(GetChild(1) != nullptr)
-            {
-                return static_cast<cParamListNode*>(GetChild(1))->NumParamsInList();
-            }
-            else
-                return 0;
-        }
-        cSymbol* GetName()
-        {
-            return static_cast<cSymbol*>(GetChild(0));
-        }
-        cDeclNode * ExprGetNode()
-        {
-            return GetName()->GetDecl();
-        }
-        cParamListNode * GetParamsList()
+        cDeclNode* GetType() { return GetName()->GetDecl()->GetType(); }
+
+        cParamListNode *GetParams()
         {
             return static_cast<cParamListNode*>(GetChild(1));
         }

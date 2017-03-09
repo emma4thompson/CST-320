@@ -21,7 +21,6 @@
 
 // define global variables
 long long cSymbol::nextId;
-cSymbolTable g_SymbolTable;
 
 // takes two string args: input_file, and output_file
 int main(int argc, char **argv)
@@ -61,21 +60,24 @@ int main(int argc, char **argv)
     // fixup cout so it redirects to output
     std::cout.rdbuf(output.rdbuf());
 
-    g_SymbolTable.insertSym();
+    g_SymbolTable.InitRootTable();
 
     result = yyparse();
     if (yyast_root != nullptr)
     {
         semantics.VisitAllNodes(yyast_root);
 
-        result += semantics.GetNumErrors();
+        result += semantics.NumErrors();
         if (result == 0)
         {
+            cComputeSize sizer;
+            sizer.VisitAllNodes(yyast_root);
+                
             output << yyast_root->ToString() << std::endl;
         } 
         else 
         {
-            output << yynerrs + semantics.GetNumErrors() << " Errors in compile\n";
+            output << yynerrs + semantics.NumErrors() << " Errors in compile\n";
         }
     }
 

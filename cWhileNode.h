@@ -1,24 +1,30 @@
 #pragma once
-
-//************************
+//**************************************
 // cWhileNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines AST node for a while statement
 //
-// Feb 9, 2017
+// Inherits from cStmtNode because this is a statement
 //
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Jan. 18, 2016
 //
 
+#include "cAstNode.h"
 #include "cStmtNode.h"
+#include "cExprNode.h"
 
 class cWhileNode : public cStmtNode
 {
     public:
-        cWhileNode (cExprNode *exprnode, cStmtNode *stmtnode)
+        // params are the condition and the statement
+        cWhileNode(cExprNode *cond, cStmtNode *stmt)
+            : cStmtNode()
         {
-            AddChild(exprnode);
-            AddChild(stmtnode);
+            AddChild(cond);
+            AddChild(stmt);
         }
 
         virtual string NodeType() { return string("while"); }

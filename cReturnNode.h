@@ -1,25 +1,28 @@
 #pragma once
-
-//************************
+//**************************************
 // cReturnNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines AST node for a lang return statement
 //
-// Feb 9, 2017
+// Author: Phil Howard 
+// phil.howard@oit.edu
 //
+// Date: Feb. 18, 2017
 //
+
 
 #include "cAstNode.h"
 #include "cStmtNode.h"
+#include "cExprNode.h"
 
 class cReturnNode : public cStmtNode
 {
     public:
-        cReturnNode(cExprNode *exprnode) : cStmtNode()
+        cReturnNode(cExprNode *expr)
         {
-            AddChild(exprnode);
+            AddChild(expr);
         }
+
         virtual string NodeType() { return string("return"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

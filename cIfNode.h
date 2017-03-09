@@ -1,32 +1,33 @@
 #pragma once
-
-//************************
+//**************************************
 // cIfNode.h
 //
-// Author: Emma Thompson
-// emma.thompson@oit.edu
+// Defines AST node for an if statement
 //
-// Feb 9, 2017
+// Inherits from cStmtNode so that if statements can be included in lists of
+// statements
 //
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Jan. 18, 2016
 //
 
 #include "cAstNode.h"
 #include "cStmtNode.h"
+#include "cExprNode.h"
 
 class cIfNode : public cStmtNode
 {
     public:
-        cIfNode(cExprNode *exprnode, cStmtsNode *if1, cStmtsNode * else1) : cStmtNode()
+        // params are the condition, the list of statments for the if part,
+        // and the list of statements for the else part. The else part can
+        // be nullptr
+        cIfNode(cExprNode *cond, cStmtsNode *ifStmt, cStmtsNode *elseStmt)
         {
-            AddChild(exprnode);
-            AddChild(if1);
-            AddChild(else1);
-        }
-
-        cIfNode(cExprNode *exprnode, cStmtsNode *if1) : cStmtNode()
-        {
-            AddChild(exprnode);
-            AddChild(if1);
+            AddChild(cond);
+            AddChild(ifStmt);
+            AddChild(elseStmt);
         }
 
         virtual string NodeType() { return string("if"); }

@@ -1,3 +1,33 @@
+Lab 5 Feedback
+
+113
+
+-1 In cVarExprNode you had "static_cast<cSymbol *>(GetChild(0)" twice. You shouldn't duplicate code.
+
+-15 Code did not compile as delivered
+
+-3 Did not implement negative numbers as requested.
+
+-5 Did not implement assignment type checks
+
+-2 Did not always detect function decls with a different number of args
+
+-2 Under some circumstances the id for a func arg did not match the varref in the body
+
+-5 If the argument to a function is an undefined variable, your code segfaults
+
+-5 Did not implement the code to determine the type of an array dereference
+
+-5 Did not implement the "is an array" error
+
+-5 Did not implement the "index is not an int" error
+
+-1 Did not allow a char to be passed to a function that took an int arg.
+
+-3 One of my other tests segfaulted, but I didn't investigate the cause.
+
+***********************************
+
 Lab 4 Feedback
 
 142

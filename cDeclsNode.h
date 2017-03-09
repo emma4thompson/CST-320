@@ -7,7 +7,7 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
-// Date: Jan. 7, 2016
+// Date: Jan. 18, 2016
 //
 
 #include "cAstNode.h"
@@ -19,7 +19,8 @@ class cDeclsNode : public cAstNode
         // param is the first decl in this decls
         cDeclsNode(cDeclNode *decl) : cAstNode()
         {
-            AddChild(decl);
+            AddChild(decl); 
+            m_size = 0;
         }
 
         // Add a decl to the list
@@ -28,14 +29,32 @@ class cDeclsNode : public cAstNode
             AddChild(decl);
         }
 
-        virtual bool IsArray()  { return false; }
-        virtual bool IsStruct() { return false; }
-        virtual bool IsType()   { return false; }
-        virtual bool IsFunc()   { return false; }
-        virtual bool IsVar()    { return false; }
-        virtual bool IsFloat()  { return false; }
-        virtual bool IsInt()    { return false; }
-        virtual bool IsChar()   { return false; }
+        // return a particular decl from the list
+        cDeclNode* GetDecl(int index)
+        {
+            return static_cast<cDeclNode*>(GetChild(index));
+        }
+
+        int GetSize()
+        {
+            return m_size;
+        }
+
+        void SetSize(int size)
+        {
+            m_size = size;
+        }
+
+        virtual string AttributesToString()
+        {
+            if(m_size == 0)
+                return "";
+            return " size=\"" + std::to_string(GetSize()) + "\"";
+        }
+
         virtual string NodeType() { return string("decls"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+    protected:
+        int m_size;
 };
