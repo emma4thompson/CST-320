@@ -1,18 +1,5 @@
 #pragma once
-//**************************************
-// cVisitor.h
-//
-// declaration of visitor base class.
-// The implementation has to be in a cpp to avoid curcular includes
-//
-// Author: Phil Howard 
-// phil.howard@oit.edu
-//
-// Date: Feb. 20, 2017
-//
 
-// forward declare all AST nodes. Can't include .h's because that would be
-// circular
 class cArrayDeclNode;
 class cAstNode;
 class cAstNode;
@@ -65,7 +52,7 @@ class cVisitor
         virtual void Visit(cParamListNode *node);
         virtual void Visit(cParamsNode *node);
         virtual void Visit(cPrintNode *node);
-        virtual void Visit(cProgramNode * node);
+        virtual void Visit(cProgramNode *node);
         virtual void Visit(cReturnNode *node);
         virtual void Visit(cStmtNode *node);
         virtual void Visit(cStmtsNode *node);

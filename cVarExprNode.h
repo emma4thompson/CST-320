@@ -15,8 +15,6 @@
 #include "cSymbol.h"
 #include "cAstNode.h"
 #include "cExprNode.h"
-#include <vector>
-#include <iostream>
 
 class cVarExprNode : public cExprNode
 {
@@ -44,52 +42,6 @@ class cVarExprNode : public cExprNode
             return static_cast<cSymbol*>(GetChild(0));
         }
 
-        cDeclNode * GetDecl()
-        {
-            return GetName()->GetDecl();
-        }
-
-        int GetSize()
-        {
-            return m_size;
-        }
-
-        void SetSize(int size)
-        {
-            m_size = size;
-        }
-
-        int GetOffset()
-        {
-            return m_offset;
-        }
-
-        void SetOffset(int offset)
-        {
-            m_offset = offset;
-        }
-
-        int GetRowSize()
-        {
-            return m_rowSize;
-        }
-
-        void SetRowSize(int rowsize)
-        {
-            m_rowSize = rowsize;
-        }
-
-        virtual string AttributesToString()
-        {
-            if(GetName()->GetDecl()->GetType()->IsArray())
-            {
-                return " size=\"" + std::to_string(m_size) + "\" offset=\"" + std::to_string(m_offset) + "\" rowsizes=\"" + std::to_string(m_rowSize) + "\"";
-            }
-            else
-            {
-                return " size=\"" + std::to_string(m_size) + "\" offset=\"" + std::to_string(m_offset) + "\"";
-            }
-        }
         // return a string representation of the name of the var
         virtual string GetTextName()
         {
@@ -115,14 +67,9 @@ class cVarExprNode : public cExprNode
 
             return name;
         }
-
-        // return the type of the VarExpr. This includes dereferencing arrays
         virtual cDeclNode *GetType() 
         { 
-            cDeclNode* decl = GetName()->GetDecl();
-            if (decl == nullptr) return nullptr;
-
-            cDeclNode* type = decl->GetType();
+            cDeclNode* type = GetName()->GetDecl()->GetType();
 
             if (type->IsArray())
             {
@@ -153,12 +100,45 @@ class cVarExprNode : public cExprNode
              return (cExprNode*)GetChild(index + 1);
         }
 
+        void SetSize(int size)      { m_size = size; }
+        void SetOffset(int offset)  { m_offset = offset; }
+        int GetSize()               { return m_size; }
+        int GetOffset()             { return m_offset; }
+
+        void AddRowSize(int size) { m_arrayRowSizes.push_back(size); }
+        int  GetRowSize(int index) { return m_arrayRowSizes[index]; }
+
+        virtual string AttributesToString()
+        {
+            if (m_size != 0 || m_offset != 0)
+            {
+                std::string result;
+                result = " size=\"" + std::to_string(m_size) + "\" offset=\"" +
+                    std::to_string(m_offset) + "\"";
+                if (m_arrayRowSizes.size() > 0)
+                {
+                    result += " rowsizes=\"";
+
+                    for (int ii : m_arrayRowSizes)
+                    {
+                        result += std::to_string(ii) + " ";
+                    }
+
+                    result.pop_back(); // remove trailing space
+                    result += "\"";
+                }
+                return result;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         virtual string NodeType() { return string("varref"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-    
     protected:
         int m_size;
         int m_offset;
-        int m_rowSize;
-        //std::vector<int> m_rowSizes;
+        vector<int> m_arrayRowSizes;
 };

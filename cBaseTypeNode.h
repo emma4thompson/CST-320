@@ -39,7 +39,7 @@ class cBaseTypeNode : public cDeclNode
 
         virtual string NodeType() { return "type"; }
         // return a string representation of the node
-        virtual string AttributesToString()
+        virtual string AttributeToString()
         {
             return " name=\"" + m_name + "\" size=\"" + 
                 std::to_string(m_size) +
@@ -47,10 +47,11 @@ class cBaseTypeNode : public cDeclNode
         }
 
         // return size of data item
-        virtual int Sizeof() { return m_size; }
+        virtual int GetSize() { return m_size; }
 
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
     protected:
         string m_name;
+        int    m_size;
         bool   m_isFloat;
 };

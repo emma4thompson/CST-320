@@ -1,189 +1,197 @@
-#pragma once
-
-#include <iostream>
 #include "cVisitor.h"
-#include "cSymbolTable.h"
+
+#define STACK_FRAME_SIZE 8
+
+static void FatalError(const char *msg)
+{
+    std::cerr << msg << std::endl;
+    exit(1);
+}
 
 class cComputeSize : public cVisitor
 {
-    public:
-        cComputeSize() : cVisitor()
+  public:
+    cComputeSize() : cVisitor()
+    {
+        m_offset = 0;
+        m_highwater = 0;
+    }
+
+    void VisitAllNodes(cAstNode *node) { node->Visit(this); }
+
+    virtual void Visit(cArrayDeclNode *node)
+    {
+        int size;
+        size = node->GetBaseType()->GetSize() * node->GetCount();
+        node->SetSize(size);
+    }
+    virtual void Visit(cBlockNode *node)
+    {
+        int start_offset = m_offset;
+        int start_highwater = m_highwater;
+
+        m_highwater = m_offset;
+        VisitAllChildren(node);
+
+        if (m_offset > m_highwater) m_highwater = m_offset;
+
+        node->SetSize(m_highwater - start_offset);
+
+        if (start_highwater > m_highwater) m_highwater = start_highwater;
+        m_offset = start_offset;
+    }
+
+    virtual void Visit(cDeclsNode *node)
+    {
+        int start_offset = m_offset;
+
+        VisitAllChildren(node);
+
+        node->SetSize(m_offset - start_offset);
+    }
+
+    virtual void Visit(cFuncDeclNode *node)
+    {
+        int start_offset = m_offset;
+        int start_highwater = m_highwater;
+
+        m_offset = -STACK_FRAME_SIZE;
+        m_highwater = 0;
+
+        if (node->GetParams() != nullptr) node->GetParams()->Visit(this);
+        m_offset = 0;
+        m_highwater = 0;
+        if (node->GetLocals() != nullptr) node->GetLocals()->Visit(this);
+        if (node->GetStmts() != nullptr) node->GetStmts()->Visit(this);
+
+        node->SetSize( RoundUp(m_highwater) );
+
+        m_highwater = start_highwater;
+        m_offset = start_offset;
+    }
+
+    virtual void Visit(cParamListNode *node)
+    {
+        int size = 0;
+        
+        // need to explicitly visit the children because expressions don't 
+        // update a size so we can't use VisitAllChildren
+        for (int ii=0; ii<node->NumChildren(); ii++)
         {
-            m_highWaterMark = 0;
-            m_offset = 0;
-            m_tempSize = 0;
-        }
+            cExprNode *expr = node->GetParam(ii);
 
-        void SetHighWater(int highWaterMark)
-        {
-            if(highWaterMark > m_highWaterMark)
-                m_highWaterMark = highWaterMark;
-        }
-
-        void Visit(cProgramNode * node)
-        {
-            VisitAllChildren(node);
-            cBlockNode * block = node->GetBlock();
-            block->SetSize(RoundUp(block->GetSize()));
-        }
-
-        void VisitAllNodes(cAstNode *node) { node->Visit(this); }
-        
-        void Visit(cArrayDeclNode *node)     
-        { 
-            VisitAllChildren(node); 
-            node->SetSize(node->GetBaseType()->GetSize() * node->GetCount());
-        }
-
-        //void Visit(cAstNode *node)          { VisitAllChildren(node); }
-        //void Visit(cAssignNode *node)       {                         } 
-        //void Visit(cBinaryExprNode *node)   {                         }
-        void Visit(cBlockNode *node)        
-        { 
-            int offset = m_offset;
-            int highWaterMark = m_highWaterMark;
-
-            m_highWaterMark = m_offset;
-            VisitAllChildren(node);
-            node->SetSize(m_highWaterMark - offset);
-            SetHighWater(highWaterMark);
-            m_offset = offset;
-        }
-
-        void Visit(cDeclsNode *node)         
-        { 
-            int offset = m_offset;
-
-            VisitAllChildren(node); 
-            node->SetSize(m_offset - offset);
-        }
-
-        //void Visit(cDeclNode *node)        { VisitAllChildren(node); }
-        //void Visit(cExprNode *node)         { VisitAllChildren(node); }
-        //void Visit(cFloatExprNode *node)    { VisitAllChildren(node); }
-        void Visit(cFuncDeclNode *node)     
-        { 
-            int offset = m_offset;
-            int highWaterMark = m_highWaterMark;
-
-            m_offset = 0;
-            m_highWaterMark = 0;
-
-            node->SetOffset(0);
-
-            VisitAllChildren(node); 
-            node->SetSize(RoundUp(m_highWaterMark));
-            m_highWaterMark = highWaterMark;
-            //SetHighWater(highWaterMark);
-            
-            m_offset = offset;
-        }
-        
-        //void Visit(cIfNode *node)           { VisitAllChildren(node); }
-        //void Visit(cIntExprNode *node)      { VisitAllChildren(node); }
-        //void Visit(cOpNode *node)           { VisitAllChildren(node); }
-        
-        void Visit(cParamListNode *node)    
-        { 
-            int size = m_tempSize;
-
-            VisitAllChildren(node); 
-
-            node->SetSize(m_tempSize - size);
-
-            m_tempSize = 0;
-        }
-        
-        void Visit(cParamsNode *node)       
-        { 
-            //int size = 0;
-            m_offset = -8;
-
-            VisitAllChildren(node); 
-        
-            //for(int i = 0; i <node->NumChildren(); i++)
-            //{
-            //    size += node->GetDecl(i)->GetSize();
-            //}
-
-            node->SetSize(abs(RoundUp(m_offset))-8);
-
-            m_offset = 0;
-        }
-        
-        //void Visit(cPrintNode *node)        { VisitAllChildren(node); }
-        //void Visit(cReturnNode *node)       { VisitAllChildren(node); }
-        //void Visit(cStmtNode *node)         { VisitAllChildren(node); }
-        //void Visit(cStmtsNode *node)        { VisitAllChildren(node); }
-        //void Visit(cStructDeclNode *node)   { VisitAllChildren(node); }
-        //void Visit(cSymbol *node)           { VisitAllChildren(node); }
-        
-        void Visit(cVarDeclNode *node)      
-        { 
-            if (m_offset < 0)
+            if ( expr != nullptr) 
             {
-                //VisitAllChildren(node);
-                node->SetSize(node->GetType()->GetSize());
+                expr->Visit(this);
+                size += RoundUp(expr->GetType()->GetSize());
+            }
+        }
 
-            
-                if(node->GetSize() != 1)
-                {
-                    m_offset = ((-1) * RoundUp(m_offset * (-1)));
-                }
+        node->SetSize(size);
+    }
 
-                m_offset -= RoundUp(node->GetSize());
-                node->SetOffset(m_offset);
-                //m_offset -= node->GetSize();
+    virtual void Visit(cParamsNode *node)
+    {
+        VisitAllChildren(node);
+
+        node->SetSize(-m_offset - STACK_FRAME_SIZE);
+        if (m_offset > m_highwater) m_highwater = m_offset;
+    }
+
+    virtual void Visit(cProgramNode *node)
+    {
+        VisitAllChildren(node);
+        cBlockNode *block = node->GetBlock();
+        block->SetSize( RoundUp(block->GetSize()) );
+    }
+
+    virtual void Visit(cStructDeclNode *node)
+    {
+        int start_offset = m_offset;
+
+        m_offset = 0;
+
+        VisitAllChildren(node);
+
+        node->SetSize(m_offset);
+        m_offset = start_offset;
+    }
+
+    virtual void Visit(cVarDeclNode *node)
+    {
+        int size = node->GetType()->GetSize();
+        node->SetSize(size);
+
+        if (size != 1 || m_offset < 0) m_offset = RoundUp(m_offset);
+
+        if (m_offset < 0)
+        {
+            node->SetOffset( m_offset - RoundUp(size) );
+            m_offset = node->GetOffset();
+        }
+        else
+        {
+            node->SetOffset(m_offset);
+            m_offset += node->GetSize();
+        }
+
+        if (m_offset > m_highwater) m_highwater = m_offset;
+    }
+
+    virtual void Visit(cVarExprNode *node)
+    {
+        bool isStruct = false;
+        bool isArray = false;
+
+        int offset = 0;
+        cDeclNode *decl;
+        cDeclNode *base_decl;
+
+        base_decl = node->GetName()->GetDecl();
+        decl = base_decl; // needed if this is an array
+
+        offset = base_decl->GetOffset();
+
+        // Need to explicitly visit all children because expressions won't 
+        // AddRowSize so we can't use VisitAllChildren
+        for (int ii=0; ii<node->NumItems(); ii++)
+        {
+            if (node->ItemIsIndex(ii))
+            {
+                cDeclNode *aDecl = base_decl->GetType();
+                isArray = true;
+                if (isStruct) 
+                    FatalError("Mixed structs and arrays is not supported");
+                node->AddRowSize( aDecl->GetType(ii+1)->GetSize() );
             }
             else
             {
-                //VisitAllChildren(node);
-                node->SetSize(node->GetType()->GetSize());
+                isStruct = true;
+                if (isArray && isStruct) 
+                    FatalError("Mixed structs and arrays is not supported");
 
-                if(node->GetType()->IsArray())
-                {
-                   node->SetSize(node->GetType()->GetBaseType()->GetSize() * node->GetType()->GetCount());
-                }
-                
-                if(node->GetSize() != 1)
-                {
-                   m_offset = RoundUp(m_offset);
-                }
-
-                node->SetOffset(m_offset);
-                m_offset += node->GetSize();
-                SetHighWater(m_offset);
+                decl = node->GetElement(ii)->GetDecl();
+                offset += decl->GetOffset();
             }
         }
+        node->SetOffset(offset);
 
-        int RoundUp(int value)
-        {
-            if(value % 4 != 0)
-                value += 4 - value % 4;
+        // decl is the last in the list, which is correct for size
+        node->SetSize(decl->GetSize());
+    }
+  protected:
+    int m_offset;
+    int m_highwater;
 
-            return value;
-        }
-        
-        void Visit(cVarExprNode *node)      
-        {
-            VisitAllChildren(node);
+    int RoundUp(int value)
+    {
+        if (value % WORD_SIZE == 0) return value;
+        if (value < 0)
+            return (value/WORD_SIZE) * WORD_SIZE - WORD_SIZE;
+        else
+            return (value/WORD_SIZE) * WORD_SIZE + WORD_SIZE;
+    }
 
-            node->SetSize(node->GetDecl()->GetSize());
-            node->SetOffset(node->GetDecl()->GetOffset());
-
-            m_tempSize += node->GetSize();
-
-            if(node->GetDecl()->GetType()->IsArray())
-            {
-                for (int i = 0; i < node->NumItems(); i++){
-                    node->SetRowSize(node->GetName()->GetDecl()->GetType(i)->GetBaseType()->GetSize());}
-        
-            }
-        }
-        //void Visit(cWhileNode *node)        { VisitAllChildren(node); }
-
-    protected:
-        int m_highWaterMark;
-        int m_offset;
-        int m_tempSize;
+    static const int WORD_SIZE = 4;
 };
+

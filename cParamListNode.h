@@ -29,29 +29,28 @@ class cParamListNode : public cAstNode
             AddChild(param);
         }
 
-        int GetSize()
-        {
-            return m_size;
-        }
-
-        void SetSize(int size)
-        {
-            m_size = size;
-        }
-
-        virtual string AttributesToString()
-        {
-            return " size=\"" + std::to_string(m_size) + "\"";
-        }
-
         cExprNode* GetParam(int index)
         {
             return static_cast<cExprNode*>(GetChild(index));
         }
 
+        void SetSize(int size) { m_size = size; }
+        int GetSize() { return m_size; }
+
         virtual string NodeType() { return string("params"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 
+        virtual string AttributesToString()
+        {
+            if (m_size != 0)
+            {
+                return " size=\"" + std::to_string(m_size) + "\"";
+            }
+            else
+            {
+                return "";
+            }
+        }
     protected:
         int m_size;
 

@@ -19,17 +19,6 @@ class cParamsNode : public cDeclsNode
         // param is the first decl in this decls
         cParamsNode(cDeclNode *decl) : cDeclsNode(decl)
         {
-            // child is added in base constructor
-        }
-
-        virtual int GetSize()
-        {
-            return m_size;
-        }
-
-        virtual void SetSize(int size)
-        {   
-            m_size = size;
         }
 
         // return the XML node name

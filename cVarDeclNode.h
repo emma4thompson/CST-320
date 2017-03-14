@@ -57,34 +57,8 @@ class cVarDeclNode : public cDeclNode
             }
         }
 
-        virtual string AttributesToString()
-        {
-            return " size=\"" + std::to_string(m_size) + "\" offset=\"" + std::to_string(m_offset) + "\"";
-        }
-
-        virtual int GetSize()
-        {
-            return m_size;
-        }
-
-        virtual void SetSize(int size)
-        {
-            m_size = size;
-        }
-
-        virtual int GetOffset()
-        {
-            return m_offset;
-        }
-
-        virtual void SetOffset(int offset)
-        {
-            m_offset = offset;
-        }
-
         virtual bool IsVar()  { return true; }
 
-        // return the type of the var
         virtual cDeclNode *GetType() 
         { 
             cSymbol* type = static_cast<cSymbol*>(GetChild(0));
