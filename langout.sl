@@ -1,0 +1,22 @@
+.function main
+main:
+PUSHVAR  0 
+PUSH  6 
+PUSHVAR  4 
+PUSH  5 
+PUSHVAR  4 
+CALL @print
+POP
+POP
+PUSHVAR  8 
+PUSH  4 
+PUSHVAR  8 
+CALL @print
+POP
+POP
+PUSHVAR  0 
+CALL @print
+POP
+POP
+PUSH 0
+RETURNV
