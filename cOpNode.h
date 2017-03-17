@@ -21,6 +21,11 @@ class cOpNode : public cAstNode
             m_op = op;
         }
 
+        int GetOperator()
+        {
+            return m_op;
+        }
+        
         virtual string NodeType()       { return "op"; }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
         virtual string AttributesToString()   

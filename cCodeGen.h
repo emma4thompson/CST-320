@@ -30,6 +30,44 @@ class cCodeGen : public cVisitor
         
             VisitAllChildren(node);      
         }
+
+        void Visit(cOpNode * node)
+        {
+            switch(node->GetOperator())
+            {
+                case '+':
+                    EmitString("PLUS");
+                    break;
+                case '-':
+                    EmitString("MINUS");
+                    break;
+                case '*':
+                    EmitString("TIMES");
+                    break;
+                case '/':
+                    EmitString("DIVIDE");
+                    break;
+                case EQUALS:
+                    EmitString("EQ");
+                    break;
+                case AND:
+                    EmitString("AND");
+                    break;
+                case OR:
+                    EmitString("OR");
+                    break;
+                case NOT_EQUALS:
+                    EmitString("NE");
+                    break;
+                case '%':
+                    EmitString("MOD");
+                    break;
+                default:
+                    break;
+            }
+            
+            EmitString("\n");
+        }
                
         void Visit(cPrintNode * node)
         {
