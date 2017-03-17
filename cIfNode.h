@@ -29,15 +29,15 @@ class cIfNode : public cStmtNode
             AddChild(ifStmt);
             AddChild(elseStmt);
         }
-        cExprNode * GetCondition()
+        cExprNode* GetCondition()
         {
             return dynamic_cast<cExprNode*>(GetChild(0));
         }
-        cStmtsNode * GetIfCode()
+        cStmtsNode* GetIfStmt()
         {
             return dynamic_cast<cStmtsNode*>(GetChild(1));
         }
-        cStmtsNode * GetElseCode()
+        cStmtsNode* GetElseStmt()
         {
             return dynamic_cast<cStmtsNode*>(GetChild(2));
         }

@@ -54,7 +54,7 @@
 %token <int_val>   AND
 %token <int_val>   OR
 %token <int_val>   EQUALS
-%token <int_val>   NOT_EQUALS
+%token <int_val>   NOTEQUALS
 
 %token  PRINT
 %token  WHILE IF ELSE ENDIF
@@ -184,7 +184,7 @@ paramlist:     paramlist ',' param     { $$ = $1; $$->Insert($3); }
 param:      expr                { $$ = $1; }
 
 expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1, $2, $3); }
-        |   expr NOT_EQUALS addit { $$ = new cBinaryExprNode($1, $2, $3); }
+        |   expr NOTEQUALS addit {$$ = new cBinaryExprNode($1, $2, $3); }
         |   addit               { $$ = $1; }
 
 addit:      addit '+' term      { $$ = new cBinaryExprNode($1, '+', $3); }

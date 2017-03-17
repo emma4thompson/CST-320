@@ -77,7 +77,7 @@ whitespace      '[\t\n\r ]'
                                 DO_RETURN(FLOAT_VAL);
                             }
 "=="                        { yylval.int_val = EQUALS; DO_RETURN(EQUALS); }
-"!="                        { yylval.int_val = NOT_EQUALS; DO_RETURN(NOT_EQUALS);}
+"!="                        { yylval.int_val = NOTEQUALS; DO_RETURN(NOTEQUALS); }
 "&&"                        { yylval.int_val = AND; DO_RETURN(AND); }
 "||"                        { yylval.int_val = OR; DO_RETURN(OR); }
 "//".*"\n"                  ;   /* Ignore comments */

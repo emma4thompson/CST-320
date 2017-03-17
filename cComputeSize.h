@@ -1,12 +1,13 @@
+#pragma once
 #include "cVisitor.h"
 
 #define STACK_FRAME_SIZE 8
 
-static void FatalError(const char *msg)
-{
-    std::cerr << msg << std::endl;
-    exit(1);
-}
+//static void FatalError(const char *msg)
+//{
+//    std::cerr << msg << std::endl;
+//    exit(1);
+//}
 
 class cComputeSize : public cVisitor
 {
@@ -25,6 +26,7 @@ class cComputeSize : public cVisitor
         size = node->GetBaseType()->GetSize() * node->GetCount();
         node->SetSize(size);
     }
+
     virtual void Visit(cBlockNode *node)
     {
         int start_offset = m_offset;
@@ -73,14 +75,14 @@ class cComputeSize : public cVisitor
     virtual void Visit(cParamListNode *node)
     {
         int size = 0;
-        
-        // need to explicitly visit the children because expressions don't 
+
+        // need to explicitly visit the children because expressions don't
         // update a size so we can't use VisitAllChildren
         for (int ii=0; ii<node->NumChildren(); ii++)
         {
             cExprNode *expr = node->GetParam(ii);
 
-            if ( expr != nullptr) 
+            if ( expr != nullptr)
             {
                 expr->Visit(this);
                 size += RoundUp(expr->GetType()->GetSize());
@@ -140,35 +142,38 @@ class cComputeSize : public cVisitor
 
     virtual void Visit(cVarExprNode *node)
     {
-        bool isStruct = false;
-        bool isArray = false;
+      //  bool isStruct = false;
+      //  bool isArray = false;
 
         int offset = 0;
         cDeclNode *decl;
         cDeclNode *base_decl;
+
+        // need to visit array indexes
+        VisitAllChildren(node);
 
         base_decl = node->GetName()->GetDecl();
         decl = base_decl; // needed if this is an array
 
         offset = base_decl->GetOffset();
 
-        // Need to explicitly visit all children because expressions won't 
+        // Need to explicitly visit all children because expressions won't
         // AddRowSize so we can't use VisitAllChildren
         for (int ii=0; ii<node->NumItems(); ii++)
         {
             if (node->ItemIsIndex(ii))
             {
                 cDeclNode *aDecl = base_decl->GetType();
-                isArray = true;
-                if (isStruct) 
-                    FatalError("Mixed structs and arrays is not supported");
+        //        isArray = true;
+       //         if (isStruct)
+       //             FatalError("Mixed structs and arrays is not supported");
                 node->AddRowSize( aDecl->GetType(ii+1)->GetSize() );
             }
             else
             {
-                isStruct = true;
-                if (isArray && isStruct) 
-                    FatalError("Mixed structs and arrays is not supported");
+         //       isStruct = true;
+         //       if (isArray && isStruct)
+         //           FatalError("Mixed structs and arrays is not supported");
 
                 decl = node->GetElement(ii)->GetDecl();
                 offset += decl->GetOffset();
@@ -194,4 +199,3 @@ class cComputeSize : public cVisitor
 
     static const int WORD_SIZE = 4;
 };
-

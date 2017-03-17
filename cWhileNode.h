@@ -28,11 +28,11 @@ class cWhileNode : public cStmtNode
         }
         cExprNode* GetCondition()
         {
-            return static_cast<cExprNode*>(GetChild(0));
+            return dynamic_cast<cExprNode*>(GetChild(0));
         }
         cStmtNode* GetWhileStmt()
         {
-            return static_cast<cStmtNode*>(GetChild(1));
+            return dynamic_cast<cStmtNode*>(GetChild(1));
         }
         virtual string NodeType() { return string("while"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }

@@ -104,7 +104,8 @@ class cVarExprNode : public cExprNode
         void SetOffset(int offset)  { m_offset = offset; }
         int GetSize()               { return m_size; }
         int GetOffset()             { return m_offset; }
-
+        int GetAmtRows()            {return m_arrayRowSizes.size();}
+        int GetRowSizeAtIndex(int index) {return m_arrayRowSizes[index];}     
         void AddRowSize(int size) { m_arrayRowSizes.push_back(size); }
         int  GetRowSize(int index) { return m_arrayRowSizes[index]; }
 
@@ -133,6 +134,10 @@ class cVarExprNode : public cExprNode
             {
                 return "";
             }
+        }
+        cDeclNode* GetDecl()
+        {
+            return GetName()->GetDecl();
         }
 
         virtual string NodeType() { return string("varref"); }

@@ -20,12 +20,7 @@ class cOpNode : public cAstNode
         {
             m_op = op;
         }
-
-        int GetOperator()
-        {
-            return m_op;
-        }
-        
+        int GetOperator(){return m_op; }
         virtual string NodeType()       { return "op"; }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
         virtual string AttributesToString()   
@@ -37,14 +32,14 @@ class cOpNode : public cAstNode
                 case EQUALS:
                     result += "==";
                     break;
-                case NOT_EQUALS:
-                    result += "!=";
-                    break;
                 case OR:
                     result += "||";
                     break;
                 case AND:
                     result += "&&";
+                    break;
+                case NOTEQUALS:
+                    result += "!=";
                     break;
                 default:
                     result += (char)m_op;

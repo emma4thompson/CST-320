@@ -36,3 +36,4 @@
 #include "cFuncExprNode.h"
 #include "cParamListNode.h"
 #include "cCodeGen.h"
+#include "cComputeSize.h"

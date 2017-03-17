@@ -28,7 +28,7 @@ long long cSymbol::nextId;
 // takes two string args: input_file, and output_file
 int main(int argc, char **argv)
 {
-    std::cout << "Emmaaaaaaa" << std::endl;
+    std::cout << "Emmaaaaaaaaaaa" << std::endl;
 
     std::string outfile_name;
     int result = 0;

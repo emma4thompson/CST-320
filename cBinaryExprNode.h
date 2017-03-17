@@ -61,7 +61,7 @@ class cBinaryExprNode : public cExprNode
         }
         cOpNode* GetOp()
         {
-            return dynamic_cast<cOpNode*>(GetChild(1));
+            return static_cast<cOpNode*>(GetChild(1));
         }
 
         virtual string NodeType() { return string("expr"); }
